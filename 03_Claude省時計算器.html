@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude 幫你省了多少時間？</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans TC','Helvetica Neue',sans-serif;background:#111;color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px}
+.ted-tag{background:#E62B1E;color:#fff;font-size:11px;font-weight:700;padding:4px 12px;letter-spacing:2px;display:inline-block;margin-bottom:16px}
+h1{font-size:2rem;font-weight:700;margin-bottom:6px}
+.sub{font-size:13px;color:#888;margin-bottom:40px;text-align:center}
+.card{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:36px;width:100%;max-width:680px}
+.total-panel{background:#E62B1E;border-radius:6px;padding:24px 28px;margin-bottom:32px;display:flex;align-items:center;justify-content:space-between}
+.total-left{}
+.total-label{font-size:11px;letter-spacing:2px;color:rgba(255,255,255,0.6);margin-bottom:4px}
+.total-num{font-size:56px;font-weight:700;line-height:1}
+.total-unit{font-size:16px;font-weight:400;margin-left:6px;opacity:0.7}
+.total-right{text-align:right}
+.total-eq{font-size:13px;color:rgba(255,255,255,0.7);line-height:1.8}
+.ctrl-section{margin-bottom:28px}
+.ctrl-title{font-size:11px;letter-spacing:2px;color:#555;text-transform:uppercase;margin-bottom:16px}
+.ctrl{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.ctrl-label{font-size:12px;color:#888;min-width:72px}
+.ctrl input[type=range]{flex:1;height:4px;cursor:pointer}
+.ctrl-val{font-size:13px;font-weight:500;min-width:40px;text-align:right}
+.breakdown{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:28px}
+.bd-item{background:#222;border-radius:6px;padding:16px 12px;text-align:center;transition:all .3s}
+.bd-num{font-size:28px;font-weight:700;margin-bottom:4px;transition:color .3s}
+.bd-label{font-size:10px;color:#666;margin-bottom:2px}
+.bd-detail{font-size:9px;color:#444}
+.divider{height:1px;background:#222;margin-bottom:24px}
+.compare{background:#1E1E1E;border-radius:6px;padding:20px;margin-bottom:20px}
+.compare-title{font-size:11px;letter-spacing:1px;color:#555;margin-bottom:14px}
+.compare-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.compare-row:last-child{margin-bottom:0}
+.compare-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.compare-text{flex:1;font-size:12px;color:#aaa;line-height:1.5}
+.compare-time{font-size:13px;font-weight:700;min-width:40px;text-align:right}
+.cta{text-align:center;padding:20px;border:1px solid #333;border-radius:6px;font-size:13px;color:#888;line-height:1.8}
+.cta strong{color:#fff;display:block;font-size:16px;margin-bottom:6px}
+</style>
+</head>
+<body>
+<div class="ted-tag">114學年度第2學期 · 全英社群研習</div>
+<h1>Claude 幫你省了多少時間？</h1>
+<p class="sub">拉動滑桿，計算這學期你可以節省多少備課時間</p>
+
+<div class="card">
+  <div class="total-panel">
+    <div class="total-left">
+      <div class="total-label">這學期預估節省</div>
+      <div class="total-num" id="total-num">34<span class="total-unit">小時</span></div>
+    </div>
+    <div class="total-right">
+      <div class="total-eq" id="total-eq">相當於每週多出<br><strong style="font-size:16px;color:#fff">近一節課</strong><br>的備課時間</div>
+    </div>
+  </div>
+
+  <div class="ctrl-section">
+    <div class="ctrl-title">這學期你的工作量</div>
+    <div class="ctrl">
+      <span class="ctrl-label">月考次數</span>
+      <input type="range" min="1" max="6" value="3" step="1" id="s-exam" style="accent-color:#E62B1E">
+      <span class="ctrl-val" id="v-exam">3 次</span>
+    </div>
+    <div class="ctrl">
+      <span class="ctrl-label">教案份數</span>
+      <input type="range" min="1" max="12" value="6" step="1" id="s-plan" style="accent-color:#1D9E75">
+      <span class="ctrl-val" id="v-plan">6 份</span>
+    </div>
+    <div class="ctrl">
+      <span class="ctrl-label">遊戲製作</span>
+      <input type="range" min="0" max="10" value="4" step="1" id="s-game" style="accent-color:#3C3489">
+      <span class="ctrl-val" id="v-game">4 個</span>
+    </div>
+  </div>
+
+  <div class="breakdown">
+    <div class="bd-item">
+      <div class="bd-num" id="bd-exam" style="color:#E62B1E">9h</div>
+      <div class="bd-label">月考命題</div>
+      <div class="bd-detail" id="bd-exam-detail">每次省約 3 小時</div>
+    </div>
+    <div class="bd-item">
+      <div class="bd-num" id="bd-plan" style="color:#1D9E75">18h</div>
+      <div class="bd-label">教案撰寫</div>
+      <div class="bd-detail" id="bd-plan-detail">每份省約 3 小時</div>
+    </div>
+    <div class="bd-item">
+      <div class="bd-num" id="bd-game" style="color:#3C3489">8h</div>
+      <div class="bd-label">遊戲製作</div>
+      <div class="bd-detail" id="bd-game-detail">每個省約 2 小時</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="compare">
+    <div class="compare-title">WITH CLAUDE — 每項任務需要多久</div>
+    <div class="compare-row">
+      <div class="compare-icon" style="background:#3A0A08">📝</div>
+      <div class="compare-text"><strong style="color:#fff">月考試卷出題</strong><br>上傳課文 PDF → 輸入指令 → 等待 → 校對 → 下載</div>
+      <div class="compare-time" style="color:#E62B1E">30分</div>
+    </div>
+    <div class="compare-row">
+      <div class="compare-icon" style="background:#0A2A1A">📖</div>
+      <div class="compare-text"><strong style="color:#fff">全英語教案設計</strong><br>說明課程結構 → Claude 生成 → 校對 → 下載 .docx</div>
+      <div class="compare-time" style="color:#1D9E75">20分</div>
+    </div>
+    <div class="compare-row">
+      <div class="compare-icon" style="background:#0A0A2A">🎮</div>
+      <div class="compare-text"><strong style="color:#fff">互動遊戲 HTML</strong><br>指定詞彙和遊戲類型 → 下載 .html → 傳給學生</div>
+      <div class="compare-time" style="color:#3C3489">15分</div>
+    </div>
+  </div>
+
+  <div class="cta">
+    <strong>現在就試試看</strong>
+    打開 claude.ai → 上傳你的龍騰課文 → 貼入命題指令<br>花 5 分鐘，你就知道它能幫到你什麼程度。
+  </div>
+</div>
+
+<script>
+const sE=document.getElementById('s-exam');
+const sP=document.getElementById('s-plan');
+const sG=document.getElementById('s-game');
+
+function update(){
+  const e=Number(sE.value),p=Number(sP.value),g=Number(sG.value);
+  document.getElementById('v-exam').textContent=e+' 次';
+  document.getElementById('v-plan').textContent=p+' 份';
+  document.getElementById('v-game').textContent=g+' 個';
+  const es=e*3,ps=p*3,gs=g*2,total=es+ps+gs;
+  document.getElementById('bd-exam').textContent=es+'h';
+  document.getElementById('bd-plan').textContent=ps+'h';
+  document.getElementById('bd-game').textContent=gs+'h';
+  document.getElementById('bd-exam-detail').textContent='共 '+e+' 次，各省 3 小時';
+  document.getElementById('bd-plan-detail').textContent='共 '+p+' 份，各省 3 小時';
+  document.getElementById('bd-game-detail').textContent='共 '+g+' 個，各省 2 小時';
+  document.getElementById('total-num').innerHTML=total+'<span class="total-unit">小時</span>';
+  const wks=Math.round(total/18*10)/10;
+  const eq=document.getElementById('total-eq');
+  if(total>=40) eq.innerHTML='相當於每週多出<br><strong style="font-size:16px;color:#fff">超過一節課</strong><br>的備課時間';
+  else if(total>=20) eq.innerHTML='相當於每週多出<br><strong style="font-size:16px;color:#fff">近一節課</strong><br>的備課時間';
+  else eq.innerHTML='相當於<br><strong style="font-size:16px;color:#fff">'+total+' 小時</strong><br>的備課時間';
+}
+
+sE.oninput=update;sP.oninput=update;sG.oninput=update;
+update();
+</script>
+</body>
+</html>

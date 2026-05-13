@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>注意力持續時間 × L7 TED Talks</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans TC','Helvetica Neue',sans-serif;background:#111;color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px}
+.ted-tag{background:#E62B1E;color:#fff;font-size:11px;font-weight:700;padding:4px 12px;letter-spacing:2px;display:inline-block;margin-bottom:16px}
+h1{font-size:2rem;font-weight:700;margin-bottom:6px}
+.sub{font-size:13px;color:#888;margin-bottom:12px;text-align:center;max-width:560px}
+.lesson-ref{font-size:11px;color:#555;margin-bottom:36px;letter-spacing:1px}
+.card{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:36px;width:100%;max-width:700px}
+.big-result{display:flex;align-items:flex-end;gap:20px;margin-bottom:32px;padding-bottom:28px;border-bottom:1px solid #222}
+.big-num{font-size:72px;font-weight:700;line-height:1;transition:color .3s}
+.big-unit{font-size:20px;color:#888;margin-bottom:12px}
+.big-desc{font-size:13px;color:#888;line-height:1.7;max-width:300px}
+.ctrl{display:flex;align-items:center;gap:14px;margin-bottom:28px}
+.ctrl-label{font-size:12px;color:#888;min-width:80px}
+.ctrl input[type=range]{flex:1;height:4px;cursor:pointer}
+.ctrl-val{font-size:14px;font-weight:700;min-width:56px;text-align:right}
+.chart-area{position:relative;height:200px;margin-bottom:12px}
+canvas{width:100%;height:100%}
+.markers{display:flex;justify-content:space-between;margin-top:6px;padding:0 2px}
+.marker{font-size:10px;color:#555;text-align:center}
+.marker.active{color:#E62B1E;font-weight:700}
+.insight-box{background:#1E1E1E;border-left:3px solid #E62B1E;padding:16px 20px;border-radius:0 6px 6px 0;margin-top:24px;font-size:13px;line-height:1.8;color:#ccc;transition:border-color .3s}
+.insight-box.good{border-color:#1D9E75}
+.insight-box.warn{border-color:#BA7517}
+.key-fact{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:20px}
+.kf{background:#222;border-radius:6px;padding:14px;text-align:center}
+.kf-num{font-size:22px;font-weight:700;color:#E62B1E;margin-bottom:4px}
+.kf-label{font-size:10px;color:#666;letter-spacing:0.5px}
+</style>
+</head>
+<body>
+<div class="ted-tag">龍騰版 L7 TED Talks · 課文概念互動圖</div>
+<h1>Attention Span 視覺化</h1>
+<p class="sub">拖動滑桿改變演講長度，即時看到聽眾注意力如何下降——這就是為什麼 TED 選擇 18 分鐘。</p>
+<div class="lesson-ref">L7 課文關鍵詞：concentrate / attention span / eighteen minutes</div>
+
+<div class="card">
+  <div class="big-result">
+    <div>
+      <div class="big-num" id="big-pct">72</div>
+      <div class="big-unit">%</div>
+    </div>
+    <div class="big-desc" id="big-desc">聽眾在 <strong>18 分鐘</strong>時的平均注意力保留率。TED 的研究顯示這是最佳的資訊傳遞時間點。</div>
+  </div>
+
+  <div class="ctrl">
+    <span class="ctrl-label">演講長度</span>
+    <input type="range" min="5" max="60" value="18" step="1" id="s-time" style="accent-color:#E62B1E">
+    <span class="ctrl-val" id="v-time" style="color:#E62B1E">18 min</span>
+  </div>
+
+  <div class="chart-area">
+    <canvas id="chart"></canvas>
+  </div>
+  <div class="markers" id="markers"></div>
+
+  <div class="insight-box" id="insight">
+    根據 L7 課文：人腦在超過 20 分鐘後注意力會快速下降。TED 選擇 18 分鐘，正好在下降之前傳遞完核心訊息——這就是 "eighteen minutes: the right time to talk"。
+  </div>
+
+  <div class="key-fact">
+    <div class="kf"><div class="kf-num">18</div><div class="kf-label">TED 標準時間（分鐘）</div></div>
+    <div class="kf"><div class="kf-num" id="kf-span">10–20</div><div class="kf-label">平均注意力持續時間</div></div>
+    <div class="kf"><div class="kf-num" id="kf-drop">28%</div><div class="kf-label" id="kf-drop-label">18分鐘後流失的注意力</div></div>
+  </div>
+</div>
+
+<script>
+const canvas=document.getElementById('chart');
+const ctx=canvas.getContext('2d');
+const sTime=document.getElementById('s-time');
+
+function getAttention(t){
+  if(t<=5) return 98;
+  if(t<=10) return 95-t*0.3;
+  if(t<=18) return 90-t*0.9;
+  if(t<=30) return 72-((t-18)*2.2);
+  return Math.max(15, 46-((t-30)*1.8));
+}
+
+function drawChart(currentMin){
+  const dpr=window.devicePixelRatio||1;
+  const rect=canvas.getBoundingClientRect();
+  canvas.width=rect.width*dpr;
+  canvas.height=rect.height*dpr;
+  ctx.scale(dpr,dpr);
+  const W=rect.width,H=rect.height;
+  const padL=36,padR=16,padT=10,padB=24;
+  const cW=W-padL-padR,cH=H-padT-padB;
+
+  // Grid
+  ctx.strokeStyle='#222';ctx.lineWidth=1;
+  [20,40,60,80,100].forEach(v=>{
+    const y=padT+cH*(1-v/100);
+    ctx.beginPath();ctx.moveTo(padL,y);ctx.lineTo(padL+cW,y);ctx.stroke();
+    ctx.fillStyle='#444';ctx.font='10px sans-serif';ctx.textAlign='right';
+    ctx.fillText(v+'%',padL-4,y+4);
+  });
+
+  // Area fill
+  const totalMins=60;
+  ctx.beginPath();
+  ctx.moveTo(padL,padT+cH);
+  for(let t=0;t<=totalMins;t++){
+    const x=padL+cW*(t/totalMins);
+    const pct=getAttention(t);
+    const y=padT+cH*(1-pct/100);
+    if(t===0) ctx.lineTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.lineTo(padL+cW,padT+cH);ctx.closePath();
+  ctx.fillStyle='rgba(230,43,30,0.08)';ctx.fill();
+
+  // Line
+  ctx.beginPath();ctx.strokeStyle='#E62B1E';ctx.lineWidth=2.5;ctx.lineJoin='round';
+  for(let t=0;t<=totalMins;t++){
+    const x=padL+cW*(t/totalMins);
+    const pct=getAttention(t);
+    const y=padT+cH*(1-pct/100);
+    t===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+
+  // TED line
+  const tedX=padL+cW*(18/totalMins);
+  ctx.beginPath();ctx.strokeStyle='#555';ctx.lineWidth=1;ctx.setLineDash([4,4]);
+  ctx.moveTo(tedX,padT);ctx.lineTo(tedX,padT+cH);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#555';ctx.font='bold 10px sans-serif';ctx.textAlign='center';
+  ctx.fillText('TED 18min',tedX,padT+8);
+
+  // Current position
+  const curX=padL+cW*(currentMin/totalMins);
+  const curPct=getAttention(currentMin);
+  const curY=padT+cH*(1-curPct/100);
+  ctx.beginPath();ctx.arc(curX,curY,6,0,Math.PI*2);
+  ctx.fillStyle=curPct>65?'#1D9E75':curPct>45?'#BA7517':'#E62B1E';ctx.fill();
+  ctx.strokeStyle='#111';ctx.lineWidth=2;ctx.stroke();
+
+  // Vertical line from current
+  ctx.beginPath();ctx.strokeStyle=curPct>65?'rgba(29,158,117,0.3)':curPct>45?'rgba(186,117,23,0.3)':'rgba(230,43,30,0.3)';
+  ctx.lineWidth=1;ctx.setLineDash([3,3]);
+  ctx.moveTo(curX,curY);ctx.lineTo(curX,padT+cH);ctx.stroke();ctx.setLineDash([]);
+
+  // X axis labels
+  [0,10,20,30,40,50,60].forEach(t=>{
+    const x=padL+cW*(t/totalMins);
+    ctx.fillStyle='#444';ctx.font='10px sans-serif';ctx.textAlign='center';
+    ctx.fillText(t,x,padT+cH+16);
+  });
+}
+
+function update(){
+  const t=Number(sTime.value);
+  const pct=Math.round(getAttention(t));
+  document.getElementById('v-time').textContent=t+' min';
+  document.getElementById('big-pct').textContent=pct;
+  const bigNum=document.getElementById('big-pct');
+  bigNum.style.color=pct>65?'#1D9E75':pct>45?'#BA7517':'#E62B1E';
+  document.getElementById('big-desc').innerHTML='聽眾在 <strong>'+t+' 分鐘</strong>時的平均注意力保留率。'+(t===18?'TED 的研究顯示這是最佳的資訊傳遞時間點。':t<18?'注意力仍在高峰期，但已開始緩慢下降。':'注意力已明顯下降，聽眾很難專注接收訊息。');
+  document.getElementById('kf-drop').textContent=(100-pct)+'%';
+  document.getElementById('kf-drop-label').textContent=t+'分鐘後流失的注意力';
+  const insight=document.getElementById('insight');
+  if(t<=18){insight.className='insight-box good';insight.textContent='根據 L7 課文：在 '+t+' 分鐘內，聽眾的注意力還能維持在 '+pct+'%。TED 選擇 18 分鐘，正好在注意力大幅下降前完成核心訊息的傳遞。';}
+  else if(t<=30){insight.className='insight-box warn';insight.textContent='超過 18 分鐘後，注意力下降加速。在第 '+t+' 分鐘，聽眾平均只能保留 '+pct+'% 的注意力——代表有 '+(100-pct)+'% 的內容可能已經流失。';}
+  else{insight.className='insight-box';insight.textContent='第 '+t+' 分鐘時，注意力只剩 '+pct+'%。L7 課文說：the limited amount of time forces speakers to present only their central or key message。這就是為什麼。';}
+  drawChart(t);
+}
+
+sTime.oninput=update;
+window.addEventListener('resize',()=>drawChart(Number(sTime.value)));
+update();
+</script>
+</body>
+</html>
