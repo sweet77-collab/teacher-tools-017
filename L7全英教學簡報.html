@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L7 TED Talks — EMI Slides</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--red:#E62B1E;--dark:#111;--mid:#1a1a1a;--card:#222;--white:#fff;--gray:#888;--lg:#333;--teal:#1D9E75;--amber:#BA7517}
+body{background:#000;font-family:'Helvetica Neue','Noto Sans TC',sans-serif;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+
+/* slide container */
+.deck{flex:1;position:relative;overflow:hidden}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;padding:60px 80px;opacity:0;pointer-events:none;transition:opacity .35s;background:var(--dark)}
+.slide.active{opacity:1;pointer-events:all}
+
+/* nav bar */
+.nav{background:#0a0a0a;border-top:1px solid #1a1a1a;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.nav-btn{padding:8px 20px;background:transparent;border:1px solid #333;color:#666;border-radius:4px;cursor:pointer;font-size:13px;font-family:inherit;transition:all .15s}
+.nav-btn:hover{border-color:var(--red);color:var(--red)}
+.nav-btn:disabled{opacity:.3;cursor:default}
+.slide-counter{font-size:12px;color:#444;letter-spacing:1px}
+.progress{height:3px;background:#1a1a1a;flex:1;margin:0 16px;border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:var(--red);border-radius:2px;transition:width .35s}
+
+/* common elements */
+.ted-tag{background:var(--red);color:#fff;font-size:11px;font-weight:700;padding:3px 12px;letter-spacing:2px;display:inline-block;margin-bottom:16px}
+.slide-num{font-size:10px;color:#333;letter-spacing:2px;margin-bottom:8px;text-transform:uppercase}
+h1{font-size:48px;font-weight:700;color:#fff;line-height:1.1;margin-bottom:12px}
+h2{font-size:32px;font-weight:700;color:#fff;line-height:1.2;margin-bottom:12px}
+h3{font-size:20px;font-weight:700;color:#fff;margin-bottom:8px}
+.sub{font-size:16px;color:#666;margin-bottom:32px}
+.red{color:var(--red)}
+.divider{width:60px;height:3px;background:var(--red);margin:16px 0}
+
+/* cards */
+.card-grid{display:grid;gap:14px;flex:1}
+.card{background:var(--card);border-radius:6px;padding:20px 22px;border-left:3px solid var(--red)}
+.card-label{font-size:10px;color:var(--red);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
+.card-text{font-size:14px;color:#ccc;line-height:1.7}
+.card-big{font-size:18px;color:#fff;font-weight:600;line-height:1.5}
+
+/* vocab */
+.vocab-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;flex:1}
+.vocab-card{background:var(--card);border-radius:6px;padding:16px 18px}
+.v-word{font-size:18px;font-weight:700;color:var(--red);margin-bottom:2px}
+.v-pron{font-size:11px;color:#555;margin-bottom:6px}
+.v-def{font-size:12px;color:#aaa;line-height:1.6}
+.v-ex{font-size:11px;color:#555;font-style:italic;margin-top:5px}
+
+/* grammar */
+.grammar-box{background:var(--card);border-radius:6px;padding:22px 24px;margin-bottom:14px}
+.pattern{font-size:18px;color:var(--red);font-weight:700;margin-bottom:10px;font-family:'Courier New',monospace}
+.example{font-size:15px;color:#ccc;line-height:1.9;padding-left:16px;border-left:2px solid #333}
+.example strong{color:#fff}
+
+/* discussion */
+.discussion-q{background:var(--card);border-radius:8px;padding:24px 28px;margin-bottom:14px;border-top:3px solid var(--red)}
+.dq-text{font-size:18px;color:#fff;line-height:1.6;margin-bottom:10px}
+.dq-hint{font-size:12px;color:#555}
+
+/* cover */
+.cover-content{flex:1;display:flex;flex-direction:column;justify-content:center}
+.cover-meta{font-size:12px;color:#444;letter-spacing:2px;margin-bottom:16px}
+
+/* warmup */
+.warmup-box{background:var(--card);border-radius:8px;padding:28px 32px;flex:1;display:flex;flex-direction:column;justify-content:center;border-top:3px solid var(--red)}
+.warmup-q{font-size:26px;color:#fff;font-weight:700;line-height:1.4;margin-bottom:20px}
+.warmup-starter{font-size:14px;color:var(--red);background:rgba(230,43,30,.08);padding:10px 16px;border-radius:4px;border-left:3px solid var(--red);display:inline-block}
+
+/* reading strategy */
+.strategy-row{display:flex;gap:16px;flex:1}
+.strategy-col{flex:1;background:var(--card);border-radius:6px;padding:20px}
+.strategy-title{font-size:12px;color:var(--red);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px}
+
+/* exit ticket */
+.exit-box{background:var(--card);border-radius:8px;padding:28px 32px;margin-bottom:14px}
+.exit-q{font-size:16px;color:#fff;line-height:1.7;margin-bottom:8px}
+.exit-blank{display:inline-block;min-width:200px;border-bottom:1px solid #444;margin:0 6px}
+
+/* two col */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;flex:1}
+
+/* badge */
+.badge{display:inline-block;padding:3px 12px;border-radius:12px;font-size:11px;font-weight:700;margin-right:8px}
+.badge-red{background:rgba(230,43,30,.15);color:var(--red);border:1px solid var(--red)}
+.badge-teal{background:rgba(29,158,117,.15);color:var(--teal);border:1px solid var(--teal)}
+.badge-gray{background:#1a1a1a;color:#666;border:1px solid #333}
+
+/* fullscreen */
+.fs-btn{position:fixed;top:14px;right:16px;background:transparent;border:1px solid #333;color:#555;padding:5px 12px;border-radius:4px;cursor:pointer;font-size:11px;font-family:inherit;z-index:99}
+.fs-btn:hover{border-color:#666;color:#aaa}
+</style>
+</head>
+<body>
+
+<button class="fs-btn" onclick="toggleFS()">⛶ 全螢幕</button>
+
+<div class="deck" id="deck">
+
+  <!-- Slide 1: Cover -->
+  <div class="slide active" style="background:var(--dark);justify-content:center">
+    <div style="position:absolute;top:0;left:0;right:0;height:4px;background:var(--red)"></div>
+    <div class="cover-content">
+      <div class="ted-tag">TED</div>
+      <div class="cover-meta">LESSON 7 · LONGMAN SENIOR HIGH ENGLISH · GRADE 10</div>
+      <h1>TED Talks:<br><span class="red">Spreading Ideas</span><br>for a Better World</h1>
+      <div class="divider"></div>
+      <div class="sub">2 Periods · Full English Instruction · EMI</div>
+      <div style="margin-top:32px;font-size:13px;color:#333">"Ideas Worth Spreading"</div>
+    </div>
+    <div style="position:absolute;bottom:40px;right:80px;font-size:11px;color:#333;letter-spacing:2px">P.153 – P.159</div>
+  </div>
+
+  <!-- Slide 2: Warm-Up -->
+  <div class="slide">
+    <div class="slide-num">Slide 2 · Warm-Up · 8 min</div>
+    <div class="ted-tag">WARM-UP</div>
+    <div class="warmup-box">
+      <div class="warmup-q">"Have you ever watched a TED Talk?<br>What was it about?"</div>
+      <div style="margin-bottom:20px">
+        <span class="badge badge-gray">Step 1</span> Think (30 sec)<br>
+        <span class="badge badge-gray" style="margin-top:8px;display:inline-block">Step 2</span> Share with your partner (2 min)<br>
+        <span class="badge badge-gray" style="margin-top:8px;display:inline-block">Step 3</span> Share with the class
+      </div>
+      <div class="warmup-starter">"I (have / have never) watched a TED Talk. It was about _____."</div>
+      <div style="margin-top:28px;padding-top:20px;border-top:1px solid #2a2a2a">
+        <div style="font-size:13px;color:var(--red);margin-bottom:8px">Key Question — Keep in mind:</div>
+        <div style="font-size:18px;color:#fff;font-weight:700">"Why do you think TED Talks are only 18 minutes long?"</div>
+        <div style="font-size:12px;color:#555;margin-top:6px">We will find the answer in today's reading.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 3: Reading — Key Ideas -->
+  <div class="slide">
+    <div class="slide-num">Slide 3 · Reading · P.155–159</div>
+    <div class="ted-tag">READING</div>
+    <h2>What is TED?</h2>
+    <div class="divider"></div>
+    <div class="card-grid" style="grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr">
+      <div class="card">
+        <div class="card-label">Founded</div>
+        <div class="card-big">1984</div>
+        <div class="card-text">Started as a small conference. Now a global platform.</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Stands for</div>
+        <div class="card-big">Technology,<br>Entertainment &amp; Design</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Motto</div>
+        <div class="card-big" style="color:var(--red)">"Ideas Worth Spreading"</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Time Limit</div>
+        <div class="card-big"><span style="font-size:36px;color:var(--red)">18</span> minutes</div>
+        <div class="card-text">Because of the human attention span.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 4: Reading Strategy -->
+  <div class="slide">
+    <div class="slide-num">Slide 4 · Reading Strategy</div>
+    <div class="ted-tag">READING STRATEGY</div>
+    <h2>Find the Topic Sentence</h2>
+    <div class="divider"></div>
+    <div class="strategy-row">
+      <div class="strategy-col">
+        <div class="strategy-title">What is a Topic Sentence?</div>
+        <div style="font-size:14px;color:#aaa;line-height:1.8">
+          A topic sentence states the <strong style="color:#fff">main idea</strong> of a paragraph.<br><br>
+          It is usually the <strong style="color:#fff">first sentence</strong>, but not always.<br><br>
+          Ask yourself: <em style="color:var(--red)">"What is this paragraph mainly about?"</em>
+        </div>
+      </div>
+      <div class="strategy-col">
+        <div class="strategy-title">Your Task</div>
+        <div style="font-size:14px;color:#aaa;line-height:1.8;margin-bottom:16px">Read pages 155–159.<br>Underline the topic sentence of <strong style="color:#fff">each paragraph</strong>.</div>
+        <div style="background:rgba(230,43,30,.08);border:1px solid rgba(230,43,30,.3);border-radius:4px;padding:12px 14px;font-size:13px;color:#ccc">
+          ⏱ You have <strong style="color:#fff">10 minutes</strong>.<br>
+          Then compare with your partner.
+        </div>
+      </div>
+      <div class="strategy-col">
+        <div class="strategy-title">Example</div>
+        <div style="background:var(--card);border-radius:4px;padding:14px;font-size:13px;color:#aaa;line-height:1.8">
+          <em>"TED stands for Technology, Entertainment and Design."</em>
+          <div style="margin-top:8px;font-size:11px;color:var(--red)">✓ This is the topic sentence — it tells us what TED stands for.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 5: Key Vocabulary -->
+  <div class="slide">
+    <div class="slide-num">Slide 5 · Key Vocabulary</div>
+    <div class="ted-tag">KEY VOCABULARY</div>
+    <div class="vocab-grid">
+      <div class="vocab-card">
+        <div class="v-word">seek</div>
+        <div class="v-pron">/siːk/ v.</div>
+        <div class="v-def">to look for or try to get something</div>
+        <div class="v-ex">"She seeks to improve her English."</div>
+      </div>
+      <div class="vocab-card">
+        <div class="v-word">audience</div>
+        <div class="v-pron">/ˈɔːdiəns/ n.</div>
+        <div class="v-def">a group of people who watch or listen</div>
+        <div class="v-ex">"The audience applauded after the talk."</div>
+      </div>
+      <div class="vocab-card">
+        <div class="v-word">concentrate</div>
+        <div class="v-pron">/ˈkɒnsntreɪt/ v.</div>
+        <div class="v-def">to focus your attention on something</div>
+        <div class="v-ex">"It's hard to concentrate in a noisy room."</div>
+      </div>
+      <div class="vocab-card">
+        <div class="v-word">attention span</div>
+        <div class="v-pron">n. phrase</div>
+        <div class="v-def">the length of time you can stay focused</div>
+        <div class="v-ex">"Children have a shorter attention span."</div>
+      </div>
+      <div class="vocab-card">
+        <div class="v-word">numerous</div>
+        <div class="v-pron">/ˈnjuːmərəs/ adj.</div>
+        <div class="v-def">many; a large number of</div>
+        <div class="v-ex">"There are numerous TED Talks online."</div>
+      </div>
+      <div class="vocab-card">
+        <div class="v-word">fascination</div>
+        <div class="v-pron">/ˌfæsɪˈneɪʃn/ n.</div>
+        <div class="v-def">a strong feeling of interest</div>
+        <div class="v-ex">"His fascination with science led him to TED."</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 6: Grammar Intro -->
+  <div class="slide">
+    <div class="slide-num">Slide 6 · Grammar</div>
+    <div class="ted-tag">GRAMMAR</div>
+    <h2>keep / leave / find + O + OC</h2>
+    <div class="divider"></div>
+    <div class="grammar-box">
+      <div class="pattern">keep + O + OC</div>
+      <div class="example">TED keeps its talks <strong>short</strong>.<br>The rule keeps the audience <strong>focused</strong>.</div>
+    </div>
+    <div class="grammar-box">
+      <div class="pattern">leave + O + OC</div>
+      <div class="example">A boring talk can leave the audience <strong>sleeping</strong>.<br>A great story leaves people <strong>inspired</strong>.</div>
+    </div>
+    <div class="grammar-box">
+      <div class="pattern">find + O + OC</div>
+      <div class="example">Many people find TED Talks <strong>inspiring</strong>.<br>I find this topic <strong>fascinating</strong>.</div>
+    </div>
+  </div>
+
+  <!-- Slide 7: Grammar Practice -->
+  <div class="slide">
+    <div class="slide-num">Slide 7 · Grammar Practice · Pair Work</div>
+    <div class="ted-tag">GRAMMAR PRACTICE</div>
+    <h2>Complete the Sentences</h2>
+    <div class="divider"></div>
+    <div style="font-size:13px;color:#555;margin-bottom:20px">Work with your partner. Use keep / leave / find + O + OC. ⏱ 4 minutes</div>
+    <div class="card-grid" style="grid-template-columns:1fr 1fr">
+      <div class="card">
+        <div class="card-label">1 · keep</div>
+        <div class="card-text" style="font-size:15px">The 18-minute rule keeps the audience _____.<br><br><em style="color:#444;font-size:12px">(adj. / V-ing: focused / engaged / interested)</em></div>
+      </div>
+      <div class="card">
+        <div class="card-label">2 · leave</div>
+        <div class="card-text" style="font-size:15px">A boring talk can leave the listeners _____.<br><br><em style="color:#444;font-size:12px">(adj. / V-ing: bored / sleeping / confused)</em></div>
+      </div>
+      <div class="card">
+        <div class="card-label">3 · find</div>
+        <div class="card-text" style="font-size:15px">I find learning English _____.<br><br><em style="color:#444;font-size:12px">(Write your own answer!)</em></div>
+      </div>
+      <div class="card">
+        <div class="card-label">4 · Your choice</div>
+        <div class="card-text" style="font-size:15px">TED keeps its motto _____.<br>"Ideas Worth Spreading."<br><br><em style="color:#444;font-size:12px">(What adjective fits here?)</em></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 8: Discussion -->
+  <div class="slide">
+    <div class="slide-num">Slide 8 · Speaking · Pair Work → Class Share</div>
+    <div class="ted-tag">DISCUSSION</div>
+    <h2>My 1-Minute TED Talk</h2>
+    <div class="divider"></div>
+    <div class="discussion-q">
+      <div class="dq-text">"If you could give an 18-minute TED Talk, what idea would you want to spread — and why?"</div>
+      <div class="dq-hint">Use at least 2 vocabulary words from today · Use one keep / leave / find sentence</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:4px">
+      <div style="background:var(--card);border-radius:6px;padding:14px">
+        <div style="font-size:10px;color:var(--red);letter-spacing:2px;margin-bottom:8px">STEP 1 · 1 min</div>
+        <div style="font-size:13px;color:#ccc">Think about your topic. It can be anything you care about.</div>
+      </div>
+      <div style="background:var(--card);border-radius:6px;padding:14px">
+        <div style="font-size:10px;color:var(--red);letter-spacing:2px;margin-bottom:8px">STEP 2 · 4 min</div>
+        <div style="font-size:13px;color:#ccc">Share with your partner. Each person speaks for ~1 minute. Partner asks 1 question.</div>
+      </div>
+      <div style="background:var(--card);border-radius:6px;padding:14px">
+        <div style="font-size:10px;color:var(--red);letter-spacing:2px;margin-bottom:8px">STEP 3 · Class</div>
+        <div style="font-size:13px;color:#ccc">3–4 students share with the class. Class votes for the most interesting idea.</div>
+      </div>
+    </div>
+    <div style="margin-top:16px;font-size:13px;color:#444;font-style:italic">Sentence starter: "If I could give a TED Talk, I would talk about _____ because _____."</div>
+  </div>
+
+  <!-- Slide 9: Extension -->
+  <div class="slide">
+    <div class="slide-num">Slide 9 · Extension</div>
+    <div class="ted-tag">GOING FURTHER</div>
+    <h2>Explore TED on Your Own</h2>
+    <div class="divider"></div>
+    <div class="two-col">
+      <div>
+        <div class="card" style="margin-bottom:12px">
+          <div class="card-label">Recommended for Grade 10</div>
+          <div class="card-big" style="font-size:16px;margin-bottom:6px">"Do schools kill creativity?"</div>
+          <div class="card-text">Sir Ken Robinson · 19 min<br>One of the most-watched TED Talks ever. Easy to follow.</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Also Try</div>
+          <div class="card-big" style="font-size:16px;margin-bottom:6px">"Your body language may shape who you are"</div>
+          <div class="card-text">Amy Cuddy · 21 min<br>Very clear English, directly useful for presentations.</div>
+        </div>
+      </div>
+      <div>
+        <div style="background:var(--card);border-radius:6px;padding:20px;height:100%">
+          <div style="font-size:10px;color:var(--red);letter-spacing:2px;margin-bottom:12px">YOUR CHALLENGE</div>
+          <div style="font-size:15px;color:#fff;line-height:1.8;margin-bottom:16px">Watch one TED Talk this week and write 3 sentences:</div>
+          <div style="font-size:13px;color:#aaa;line-height:2.2">
+            1. The talk is about _____.<br>
+            2. I find it _____ because _____.<br>
+            3. One idea I want to remember is _____.
+          </div>
+          <div style="margin-top:16px;font-size:11px;color:#444">📍 ted.com · All talks have English subtitles</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 10: Exit Ticket -->
+  <div class="slide">
+    <div class="slide-num">Slide 10 · Exit Ticket · 5 min</div>
+    <div class="ted-tag">EXIT TICKET</div>
+    <h2>Before You Leave</h2>
+    <div class="divider"></div>
+    <div style="font-size:13px;color:#555;margin-bottom:20px">Write 2–3 sentences in English on a piece of paper. Hand it in before you go.</div>
+    <div class="exit-box">
+      <div class="exit-q">1. The grammar pattern I learned today is <span class="exit-blank"></span>.<br>
+      Example: <span class="exit-blank"></span></div>
+    </div>
+    <div class="exit-box">
+      <div class="exit-q">2. TED limits talks to 18 minutes because <span class="exit-blank"></span>.</div>
+    </div>
+    <div class="exit-box">
+      <div class="exit-q">3. If I were a TED speaker, I would talk about <span class="exit-blank"></span> because <span class="exit-blank"></span>.</div>
+    </div>
+    <div style="margin-top:20px;text-align:center;font-size:14px;color:var(--red);font-style:italic">"Ideas Worth Spreading — starting with yours."</div>
+  </div>
+
+</div>
+
+<!-- Navigation -->
+<div class="nav">
+  <button class="nav-btn" id="prev-btn" onclick="navigate(-1)" disabled>← Prev</button>
+  <div style="display:flex;align-items:center;flex:1;margin:0 16px">
+    <div class="progress"><div class="progress-fill" id="progress-fill" style="width:10%"></div></div>
+    <div class="slide-counter" id="slide-counter">1 / 10</div>
+  </div>
+  <button class="nav-btn" id="next-btn" onclick="navigate(1)">Next →</button>
+</div>
+
+<script>
+let current = 0;
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+
+function navigate(dir) {
+  slides[current].classList.remove('active');
+  current = Math.max(0, Math.min(total - 1, current + dir));
+  slides[current].classList.add('active');
+  document.getElementById('slide-counter').textContent = (current + 1) + ' / ' + total;
+  document.getElementById('progress-fill').style.width = ((current + 1) / total * 100) + '%';
+  document.getElementById('prev-btn').disabled = current === 0;
+  document.getElementById('next-btn').disabled = current === total - 1;
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') navigate(1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') navigate(-1);
+});
+
+function toggleFS() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen();
+  } else {
+    document.exitFullscreen();
+  }
+}
+</script>
+</body>
+</html>
