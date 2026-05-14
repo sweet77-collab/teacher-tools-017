@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L7 口說評量表</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--brown:#6B4C35;--ink:#2C2C2A;--bg:#F4F1EC;--cream:#EDE9E0;--lg:#D8D4CC;--gray:#9A9590;--teal:#1D9E75;--amber:#BA7517;--red:#C0392B}
+body{font-family:'Noto Sans TC','Helvetica Neue',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh}
+.header{background:var(--brown);color:#fff;padding:16px 24px;display:flex;align-items:center;justify-content:space-between}
+.header h1{font-size:16px;font-weight:700}
+.header p{font-size:11px;opacity:.7;margin-top:3px}
+.tab-bar{background:var(--ink);display:flex}
+.tab{padding:10px 24px;font-size:12px;color:rgba(255,255,255,.4);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s}
+.tab.active{color:#fff;border-color:var(--brown)}
+.content{padding:20px 24px;max-width:1100px;margin:0 auto}
+
+/* 評量規準 */
+.rubric-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:12px}
+.rubric-table th{background:var(--ink);color:rgba(255,255,255,.7);padding:10px 12px;text-align:left;font-weight:600;font-size:11px}
+.rubric-table td{padding:10px 12px;border:1px solid var(--lg);vertical-align:top;line-height:1.65}
+.rubric-table tr:nth-child(even) td{background:var(--cream)}
+.rubric-table tr:nth-child(odd) td{background:#fff}
+.score-badge{display:inline-block;width:32px;height:32px;border-radius:50%;background:var(--brown);color:#fff;font-size:14px;font-weight:700;text-align:center;line-height:32px}
+.grade-badge{font-size:16px;font-weight:700;color:var(--brown)}
+
+/* 計分表 */
+.class-info{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px}
+.info-field{display:flex;flex-direction:column;gap:4px}
+.info-field label{font-size:10px;color:var(--gray);letter-spacing:1px;text-transform:uppercase}
+.info-field input{padding:8px 12px;border:1px solid var(--lg);border-radius:4px;background:#fff;font-size:13px;font-family:inherit;color:var(--ink);outline:none}
+.info-field input:focus{border-color:var(--brown)}
+
+.score-table{width:100%;border-collapse:collapse;font-size:12px}
+.score-table th{background:var(--ink);color:rgba(255,255,255,.7);padding:8px 12px;text-align:center;font-size:11px;font-weight:600;position:sticky;top:0;z-index:1}
+.score-table th:first-child{text-align:center}
+.score-table th:nth-child(2){text-align:left}
+.score-table td{padding:6px 10px;border:1px solid var(--lg);text-align:center;vertical-align:middle}
+.score-table tr:nth-child(even) td{background:var(--cream)}
+.score-table tr:nth-child(odd) td{background:#fff}
+.score-table td:nth-child(2){text-align:left}
+.score-input{width:60px;padding:4px 6px;border:1px solid var(--lg);border-radius:3px;text-align:center;font-size:13px;font-family:inherit;background:transparent;outline:none;transition:border-color .15s}
+.score-input:focus{border-color:var(--brown);background:#fff}
+.score-input:invalid{border-color:var(--red)}
+.grade-cell{font-weight:700;font-size:13px}
+.grade-Ap{color:var(--teal)}.grade-A{color:var(--teal)}.grade-B{color:var(--amber)}.grade-C{color:var(--amber)}.grade-D{color:var(--red)}
+
+.summary-bar{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-top:16px;padding:16px;background:var(--ink);border-radius:6px}
+.sum-item{text-align:center}
+.sum-val{font-size:22px;font-weight:700;color:#fff}
+.sum-label{font-size:9px;color:rgba(255,255,255,.4);margin-top:3px;letter-spacing:1px}
+.sum-item.highlight .sum-val{color:var(--brown)}
+
+.btn-print{padding:8px 20px;background:var(--brown);color:#fff;border:none;border-radius:4px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+.btn-print:hover{background:#5a3d28}
+.btn-clear{padding:8px 20px;background:transparent;color:var(--gray);border:1px solid var(--lg);border-radius:4px;font-size:12px;cursor:pointer;font-family:inherit;margin-left:8px}
+.btn-clear:hover{border-color:var(--ink);color:var(--ink)}
+
+.note{font-size:10px;color:var(--gray);margin-top:10px;font-style:italic}
+
+@media print{
+  .tab-bar,.btn-print,.btn-clear{display:none}
+  .content{padding:10px}
+  .summary-bar{background:var(--cream);-webkit-print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>L7 TED Talks — My 1-minute TED Talk 口說活動評量表</h1>
+    <p>114學年度第2學期　·　全英社群研習　·　林怡青老師</p>
+  </div>
+  <button class="btn-print" onclick="window.print()">🖨 列印</button>
+</div>
+
+<div class="tab-bar">
+  <div class="tab active" onclick="showTab('rubric',this)">評量規準 Rubric</div>
+  <div class="tab" onclick="showTab('score',this)">班級計分表</div>
+</div>
+
+<!-- 評量規準 -->
+<div class="content" id="tab-rubric">
+  <table class="rubric-table">
+    <thead>
+      <tr>
+        <th style="width:60px">分數</th>
+        <th style="width:60px">等第</th>
+        <th>Content 內容</th>
+        <th>Language 語言</th>
+        <th>Delivery 表達</th>
+        <th>Structure 結構</th>
+        <th>整體印象分說明</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><div class="score-badge">5</div></td>
+        <td><div class="grade-badge">A+</div></td>
+        <td>Presents a clear, original idea with a powerful, memorable message. Uses a strong key phrase that connects to the topic.</td>
+        <td>Uses accurate, varied vocabulary from the lesson. Minimal grammatical errors. Speech sounds natural and fluent.</td>
+        <td>Confident delivery with strong eye contact. Appropriate pace and volume. Engages the audience effectively.</td>
+        <td>Clear opening statement, focused body, and strong closing. Well-organized and easy to follow.</td>
+        <td>Outstanding — exceeds expectations in all areas. Ready to present to a real audience.</td>
+      </tr>
+      <tr>
+        <td><div class="score-badge">4</div></td>
+        <td><div class="grade-badge">A</div></td>
+        <td>Idea is clear and focused. Message is understandable and relevant. Key phrase is present and appropriate.</td>
+        <td>Generally accurate vocabulary and grammar. Minor errors that do not affect understanding.</td>
+        <td>Mostly confident. Maintains eye contact most of the time. Pace and volume mostly appropriate.</td>
+        <td>Clear structure with a recognizable opening, body, and closing. Slight weakness in one area.</td>
+        <td>Good — meets expectations with only minor gaps. A strong performance overall.</td>
+      </tr>
+      <tr>
+        <td><div class="score-badge">3</div></td>
+        <td><div class="grade-badge">B</div></td>
+        <td>Idea is present but somewhat vague. Message could be clearer or more focused.</td>
+        <td>Some vocabulary and grammar errors. Communication is understandable but limited.</td>
+        <td>Somewhat nervous. Reads notes occasionally. Pace is uneven at times.</td>
+        <td>Some structure is evident but transitions between sections are weak.</td>
+        <td>Satisfactory — meets basic expectations. Some areas need improvement.</td>
+      </tr>
+      <tr>
+        <td><div class="score-badge">2</div></td>
+        <td><div class="grade-badge">C</div></td>
+        <td>Idea is unclear or underdeveloped. Message is difficult to identify.</td>
+        <td>Frequent errors in vocabulary or grammar. Meaning is sometimes unclear.</td>
+        <td>Noticeably nervous. Relies heavily on notes. Difficult to follow at times.</td>
+        <td>Structure is weak. Difficult to identify a clear opening or closing.</td>
+        <td>Needs improvement — partially meets expectations. Significant revision needed.</td>
+      </tr>
+      <tr>
+        <td><div class="score-badge">1</div></td>
+        <td><div class="grade-badge">D</div></td>
+        <td>No clear idea or message. Talk is off-topic or extremely brief.</td>
+        <td>Errors seriously impede communication. Very limited vocabulary.</td>
+        <td>Inaudible or incomprehensible. No eye contact. Reads entire talk from notes.</td>
+        <td>No identifiable structure. Very difficult to follow.</td>
+        <td>Insufficient — does not meet basic expectations. Requires significant support.</td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="note">使用說明：整體印象分（1–5分）——老師觀察學生整體表現後給分，不需要四個向度分開計算。右側欄位供現場參考。</p>
+</div>
+
+<!-- 計分表 -->
+<div class="content" id="tab-score" style="display:none">
+  <div class="class-info">
+    <div class="info-field"><label>班級</label><input type="text" id="f-class" placeholder="例：405"></div>
+    <div class="info-field"><label>日期</label><input type="text" id="f-date" placeholder="例：114/05/20"></div>
+    <div class="info-field"><label>授課教師</label><input type="text" id="f-teacher" value="林怡青老師"></div>
+  </div>
+
+  <table class="score-table">
+    <thead>
+      <tr>
+        <th style="width:60px">座號</th>
+        <th style="width:140px">姓名</th>
+        <th style="width:130px">整體印象分（1–5）</th>
+        <th style="width:80px">等第</th>
+        <th>備註</th>
+      </tr>
+    </thead>
+    <tbody id="score-body"></tbody>
+  </table>
+
+  <div class="summary-bar" id="summary">
+    <div class="sum-item highlight"><div class="sum-val" id="s-avg">—</div><div class="sum-label">全班平均</div></div>
+    <div class="sum-item"><div class="sum-val" id="s-count">0</div><div class="sum-label">已評人數</div></div>
+    <div class="sum-item"><div class="sum-val" id="s-ap" style="color:var(--teal)">0</div><div class="sum-label">A+</div></div>
+    <div class="sum-item"><div class="sum-val" id="s-a" style="color:var(--teal)">0</div><div class="sum-label">A</div></div>
+    <div class="sum-item"><div class="sum-val" id="s-b" style="color:var(--amber)">0</div><div class="sum-label">B</div></div>
+    <div class="sum-item"><div class="sum-val" id="s-c" style="color:var(--amber)">0</div><div class="sum-label">C</div></div>
+    <div class="sum-item"><div class="sum-val" id="s-d" style="color:var(--red)">0</div><div class="sum-label">D</div></div>
+  </div>
+
+  <div style="margin-top:12px;display:flex;align-items:center;gap:8px">
+    <button class="btn-print" onclick="window.print()">🖨 列印計分表</button>
+    <button class="btn-clear" onclick="clearAll()">清除所有分數</button>
+    <span class="note" style="margin-top:0">填入 1–5 分後等第自動計算，統計即時更新</span>
+  </div>
+</div>
+
+<script>
+// Build score table
+const tbody = document.getElementById('score-body');
+for(let i=1;i<=30;i++){
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td>${i}</td>
+    <td><input type="text" style="width:120px;padding:3px 6px;border:1px solid var(--lg);border-radius:3px;font-family:inherit;font-size:12px;background:transparent;outline:none"></td>
+    <td><input class="score-input" type="number" min="1" max="5" step="1" id="sc-${i}" oninput="calcRow(${i})"></td>
+    <td id="gr-${i}" class="grade-cell">—</td>
+    <td><input type="text" style="width:100%;padding:3px 6px;border:1px solid var(--lg);border-radius:3px;font-family:inherit;font-size:12px;background:transparent;outline:none"></td>
+  `;
+  tbody.appendChild(tr);
+}
+
+function getGrade(s){
+  if(!s||s<1||s>5) return null;
+  return s>=5?'A+':s==4?'A':s==3?'B':s==2?'C':'D';
+}
+
+function calcRow(i){
+  const val = parseFloat(document.getElementById('sc-'+i).value);
+  const grade = getGrade(val);
+  const cell = document.getElementById('gr-'+i);
+  if(grade){
+    cell.textContent = grade;
+    cell.className = 'grade-cell grade-'+(grade==='A+'?'Ap':grade);
+  } else {
+    cell.textContent = '—';
+    cell.className = 'grade-cell';
+  }
+  updateSummary();
+}
+
+function updateSummary(){
+  let scores=[], grades={A:0,Ap:0,B:0,C:0,D:0};
+  for(let i=1;i<=30;i++){
+    const v=parseFloat(document.getElementById('sc-'+i).value);
+    if(v>=1&&v<=5){
+      scores.push(v);
+      const g=getGrade(v);
+      if(g==='A+') grades.Ap++; else grades[g]++;
+    }
+  }
+  document.getElementById('s-count').textContent=scores.length;
+  document.getElementById('s-avg').textContent=scores.length?(scores.reduce((a,b)=>a+b,0)/scores.length).toFixed(1):'—';
+  document.getElementById('s-ap').textContent=grades.Ap;
+  document.getElementById('s-a').textContent=grades.A;
+  document.getElementById('s-b').textContent=grades.B;
+  document.getElementById('s-c').textContent=grades.C;
+  document.getElementById('s-d').textContent=grades.D;
+}
+
+function clearAll(){
+  if(!confirm('確定要清除所有分數嗎？')) return;
+  for(let i=1;i<=30;i++){
+    document.getElementById('sc-'+i).value='';
+    document.getElementById('gr-'+i).textContent='—';
+    document.getElementById('gr-'+i).className='grade-cell';
+  }
+  updateSummary();
+}
+
+function showTab(tab, el){
+  document.getElementById('tab-rubric').style.display=tab==='rubric'?'block':'none';
+  document.getElementById('tab-score').style.display=tab==='score'?'block':'none';
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+}
+</script>
+</body>
+</html>
