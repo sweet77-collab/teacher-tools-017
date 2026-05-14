@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L7 TED Talks — Differentiated Worksheets</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--brown:#6B4C35;--ink:#2C2C2A;--bg:#F4F1EC;--cream:#EDE9E0;--lg:#D8D4CC;--gray:#9A9590;--teal:#1D9E75;--red:#C0392B;--blue:#2B4C8C}
+body{font-family:'Noto Sans TC','Helvetica Neue',sans-serif;background:var(--bg);color:var(--ink);font-size:13px;line-height:1.75}
+.header{background:var(--brown);color:#fff;padding:16px 28px}
+.header h1{font-size:16px;font-weight:700;margin-bottom:3px}
+.header p{font-size:11px;opacity:.7}
+.tab-bar{background:var(--ink);display:flex}
+.tab{padding:11px 28px;font-size:12px;color:rgba(255,255,255,.4);cursor:pointer;border-bottom:3px solid transparent;transition:all .15s}
+.tab.f.active{color:#fff;border-color:#BA7517}
+.tab.s.active{color:#fff;border-color:var(--teal)}
+.tab.c.active{color:#fff;border-color:var(--blue)}
+.wrap{max-width:820px;margin:0 auto;padding:24px}
+.level-badge{display:inline-block;padding:3px 12px;border-radius:12px;font-size:10px;font-weight:700;letter-spacing:1px;margin-bottom:14px}
+.f-badge{background:rgba(186,117,23,.15);color:#BA7517;border:1px solid #BA7517}
+.s-badge{background:rgba(29,158,117,.15);color:var(--teal);border:1px solid var(--teal)}
+.c-badge{background:rgba(43,76,140,.15);color:var(--blue);border:1px solid var(--blue)}
+.ws-title{font-size:18px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.ws-sub{font-size:11px;color:var(--gray);margin-bottom:20px}
+.section{margin-bottom:28px}
+.section-title{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding-bottom:6px;border-bottom:2px solid;margin-bottom:14px}
+.f-sec{color:#BA7517;border-color:#BA7517}
+.s-sec{color:var(--teal);border-color:var(--teal)}
+.c-sec{color:var(--blue);border-color:var(--blue)}
+
+/* vocab table */
+.vocab-table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:8px}
+.vocab-table th{background:var(--ink);color:rgba(255,255,255,.7);padding:7px 12px;text-align:left;font-size:10px;font-weight:600}
+.vocab-table td{padding:8px 12px;border:1px solid var(--lg);vertical-align:top}
+.vocab-table tr:nth-child(even) td{background:var(--cream)}
+.vocab-table .word{font-weight:700;color:var(--brown)}
+.vocab-table .pron{font-size:10px;color:var(--gray)}
+
+/* fill in */
+.fill-q{background:#fff;border:1px solid var(--lg);border-radius:6px;padding:14px 16px;margin-bottom:10px}
+.fill-num{font-size:9px;color:var(--gray);margin-bottom:5px;letter-spacing:1px}
+.fill-text{font-size:13px;color:var(--ink);line-height:2.0}
+.blank{display:inline-block;min-width:80px;border-bottom:1.5px solid var(--ink);margin:0 3px;text-align:center}
+.hint{font-size:10px;color:var(--gray);font-style:italic;margin-top:5px}
+.ans-input{border:none;border-bottom:1.5px solid var(--ink);background:transparent;font-size:13px;font-family:inherit;outline:none;min-width:80px;text-align:center;padding:0 4px;color:var(--ink)}
+.ans-input.correct{border-color:var(--teal);color:var(--teal)}
+.ans-input.wrong{border-color:var(--red);color:var(--red)}
+
+/* sentence writing */
+.write-q{background:#fff;border:1px solid var(--lg);border-radius:6px;padding:14px 16px;margin-bottom:10px}
+.write-label{font-size:10px;color:var(--gray);margin-bottom:6px}
+.write-word{font-size:13px;font-weight:700;color:var(--brown);margin-bottom:8px}
+.write-line{width:100%;border:none;border-bottom:1px solid var(--lg);background:transparent;padding:6px 0;font-size:13px;font-family:inherit;outline:none;display:block;margin-bottom:4px}
+
+/* cloze */
+.cloze-box{background:#fff;border:1px solid var(--lg);border-radius:6px;padding:18px;font-size:13px;line-height:2.6;margin-bottom:12px}
+.cloze-num{font-weight:700;color:var(--teal);margin-right:2px}
+select.cloze-sel{font-family:inherit;font-size:12px;border:1px solid var(--lg);border-radius:3px;padding:2px 6px;background:#fff;cursor:pointer;outline:none}
+select.cloze-sel.correct{border-color:var(--teal);color:var(--teal)}
+select.cloze-sel.wrong{border-color:var(--red);color:var(--red)}
+
+/* open questions */
+.open-q{background:#fff;border:1px solid var(--lg);border-radius:6px;padding:14px 16px;margin-bottom:10px}
+.open-num{font-size:9px;color:var(--gray);margin-bottom:5px;letter-spacing:1px}
+.open-text{font-size:13px;color:var(--ink);margin-bottom:10px;line-height:1.75}
+textarea.open-ans{width:100%;border:1px solid var(--lg);border-radius:4px;padding:8px 10px;font-size:12px;font-family:inherit;resize:vertical;min-height:70px;background:var(--bg);outline:none}
+textarea.open-ans:focus{border-color:var(--brown)}
+
+/* essay */
+.essay-box{background:#fff;border:1px solid var(--lg);border-radius:6px;padding:18px;margin-bottom:12px}
+.essay-prompt{font-size:13px;color:var(--ink);margin-bottom:14px;line-height:1.75;padding:12px;background:var(--cream);border-left:3px solid var(--blue);border-radius:0 4px 4px 0}
+textarea.essay-ans{width:100%;border:1px solid var(--lg);border-radius:4px;padding:10px;font-size:13px;font-family:inherit;resize:vertical;min-height:180px;background:var(--bg);outline:none;line-height:1.85}
+textarea.essay-ans:focus{border-color:var(--blue)}
+.word-count{font-size:10px;color:var(--gray);margin-top:5px;text-align:right}
+
+/* action bar */
+.action-bar{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.btn{padding:8px 18px;border-radius:4px;border:none;cursor:pointer;font-size:12px;font-weight:700;font-family:inherit;transition:all .15s}
+.btn-check{background:var(--brown);color:#fff}
+.btn-check:hover{background:#5a3d28}
+.btn-print{background:transparent;border:1px solid var(--lg);color:var(--gray)}
+.btn-print:hover{border-color:var(--ink);color:var(--ink)}
+.btn-reset{background:transparent;border:1px solid var(--lg);color:var(--gray)}
+
+.note{font-size:10px;color:var(--gray);font-style:italic;margin-top:6px}
+
+@media print{
+  .tab-bar,.action-bar,.header{display:none}
+  .wrap{padding:0}
+  [id^="tab-"]{display:block!important}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>L7 TED Talks: Spreading Ideas — Differentiated Worksheets</h1>
+  <p>三種程度學習單 · Claude 根據 L7 課文生成 · Foundation / Standard / Challenge</p>
+</div>
+
+<div class="tab-bar">
+  <div class="tab f active" onclick="showTab('f',this)">Foundation　程度較弱</div>
+  <div class="tab s" onclick="showTab('s',this)">Standard　一般程度</div>
+  <div class="tab c" onclick="showTab('c',this)">Challenge　程度較強</div>
+</div>
+
+<!-- ── FOUNDATION ──────────────────────────────────── -->
+<div id="tab-f" class="wrap">
+  <div class="level-badge f-badge">FOUNDATION · 程度較弱</div>
+  <div class="ws-title">L7 TED Talks — Vocabulary &amp; Fill-in Worksheet</div>
+  <div class="ws-sub">Name: ________________　Class: ________________　Date: ________________</div>
+
+  <div class="action-bar">
+    <button class="btn btn-check" onclick="checkF()">✓ 核對答案</button>
+    <button class="btn btn-reset" onclick="resetF()">重設</button>
+    <button class="btn btn-print" onclick="window.print()">🖨 列印</button>
+  </div>
+
+  <!-- Part 1 Vocab -->
+  <div class="section">
+    <div class="section-title f-sec">Part 1 · Key Vocabulary</div>
+    <table class="vocab-table">
+      <thead><tr><th>Word</th><th>Part of Speech</th><th>English Definition</th><th>Example Sentence</th></tr></thead>
+      <tbody>
+        <tr><td><div class="word">seek</div><div class="pron">/siːk/</div></td><td>v.</td><td>to look for or try to get something</td><td>She seeks to improve her English every day.</td></tr>
+        <tr><td><div class="word">audience</div><div class="pron">/ˈɔːdiəns/</div></td><td>n.</td><td>a group of people who watch or listen to something</td><td>The audience applauded after the talk.</td></tr>
+        <tr><td><div class="word">concentrate</div><div class="pron">/ˈkɒnsntreɪt/</div></td><td>v.</td><td>to focus your attention on something</td><td>It is hard to concentrate in a noisy place.</td></tr>
+        <tr><td><div class="word">attention span</div><div class="pron">/əˈtenʃn spæn/</div></td><td>n.</td><td>the length of time you can stay focused</td><td>Children often have a shorter attention span.</td></tr>
+        <tr><td><div class="word">numerous</div><div class="pron">/ˈnjuːmərəs/</div></td><td>adj.</td><td>many; a large number of</td><td>There are numerous TED Talks online.</td></tr>
+        <tr><td><div class="word">fascination</div><div class="pron">/ˌfæsɪˈneɪʃn/</div></td><td>n.</td><td>a strong feeling of interest or attraction</td><td>His fascination with science led him to give a TED Talk.</td></tr>
+        <tr><td><div class="word">established</div><div class="pron">/ɪˈstæblɪʃt/</div></td><td>v.</td><td>started or created something officially</td><td>TED was established in 1984.</td></tr>
+        <tr><td><div class="word">broaden</div><div class="pron">/ˈbrɔːdn/</div></td><td>v.</td><td>to make something wider or more varied</td><td>Reading can broaden your knowledge.</td></tr>
+        <tr><td><div class="word">platform</div><div class="pron">/ˈplætfɔːm/</div></td><td>n.</td><td>a place or opportunity to share ideas</td><td>TED is a platform for great ideas.</td></tr>
+        <tr><td><div class="word">insight</div><div class="pron">/ˈɪnsaɪt/</div></td><td>n.</td><td>a clear understanding of something</td><td>The talk gave me new insights about learning.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Part 2 Fill in -->
+  <div class="section">
+    <div class="section-title f-sec">Part 2 · Fill in the Blanks （字頭已給）</div>
+
+    <div class="fill-q">
+      <div class="fill-num">QUESTION 1</div>
+      <div class="fill-text">TED was e<input class="ans-input" id="f1" data-ans="established" placeholder="________"> in 1984 as a small conference.</div>
+      <div class="hint">💡 Hint: started officially (字頭: e)</div>
+    </div>
+
+    <div class="fill-q">
+      <div class="fill-num">QUESTION 2</div>
+      <div class="fill-text">The human a<input class="ans-input" id="f2" data-ans="attention span" placeholder="____________"> is limited, so TED keeps talks to 18 minutes.</div>
+      <div class="hint">💡 Hint: how long you can stay focused (字頭: a)</div>
+    </div>
+
+    <div class="fill-q">
+      <div class="fill-num">QUESTION 3</div>
+      <div class="fill-text">TED Talks help people b<input class="ans-input" id="f3" data-ans="broaden" placeholder="________"> their knowledge and understanding.</div>
+      <div class="hint">💡 Hint: make wider (字頭: b)</div>
+    </div>
+
+    <div class="fill-q">
+      <div class="fill-num">QUESTION 4</div>
+      <div class="fill-text">There are n<input class="ans-input" id="f4" data-ans="numerous" placeholder="________"> TED videos available online for free.</div>
+      <div class="hint">💡 Hint: many (字頭: n)</div>
+    </div>
+
+    <div class="fill-q">
+      <div class="fill-num">QUESTION 5</div>
+      <div class="fill-text">James Cameron shared his f<input class="ans-input" id="f5" data-ans="fascination" placeholder="________"> with science fiction at TED.</div>
+      <div class="hint">💡 Hint: strong interest (字頭: f)</div>
+    </div>
+
+    <div class="fill-q">
+      <div class="fill-num">QUESTION 6</div>
+      <div class="fill-text">It is important to c<input class="ans-input" id="f6" data-ans="concentrate" placeholder="________"> on the speaker's main idea when watching a talk.</div>
+      <div class="hint">💡 Hint: focus (字頭: c)</div>
+    </div>
+
+    <div class="fill-q">
+      <div class="fill-num">QUESTION 7</div>
+      <div class="fill-text">TED is a p<input class="ans-input" id="f7" data-ans="platform" placeholder="________"> where people share ideas worth spreading.</div>
+      <div class="hint">💡 Hint: a place to share (字頭: p)</div>
+    </div>
+
+    <div class="fill-q">
+      <div class="fill-num">QUESTION 8</div>
+      <div class="fill-text">The a<input class="ans-input" id="f8" data-ans="audience" placeholder="________"> listened carefully to every word of the 18-minute talk.</div>
+      <div class="hint">💡 Hint: the people watching (字頭: a)</div>
+    </div>
+
+    <div class="fill-q">
+      <div class="fill-num">QUESTION 9</div>
+      <div class="fill-text">Many people s<input class="ans-input" id="f9" data-ans="seek" placeholder="________"> to learn new things by watching TED Talks.</div>
+      <div class="hint">💡 Hint: try to get or find (字頭: s)</div>
+    </div>
+
+    <div class="fill-q">
+      <div class="fill-num">QUESTION 10</div>
+      <div class="fill-text">Each TED Talk gives the i<input class="ans-input" id="f10" data-ans="insight" placeholder="________"> of a lifetime in just 18 minutes.</div>
+      <div class="hint">💡 Hint: clear understanding (字頭: i)</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── STANDARD ────────────────────────────────────── -->
+<div id="tab-s" class="wrap" style="display:none">
+  <div class="level-badge s-badge">STANDARD · 一般程度</div>
+  <div class="ws-title">L7 TED Talks — Vocabulary &amp; Cloze Worksheet</div>
+  <div class="ws-sub">Name: ________________　Class: ________________　Date: ________________</div>
+
+  <div class="action-bar">
+    <button class="btn btn-check" onclick="checkS()" style="background:var(--teal)">✓ 核對答案</button>
+    <button class="btn btn-reset" onclick="resetS()">重設</button>
+    <button class="btn btn-print" onclick="window.print()">🖨 列印</button>
+  </div>
+
+  <!-- Part 1 Sentence Writing -->
+  <div class="section">
+    <div class="section-title s-sec">Part 1 · Vocabulary in Sentences 詞彙造句</div>
+    <p style="font-size:11px;color:var(--gray);margin-bottom:12px">Use each word to write a sentence of your own. The sentence must show that you understand the meaning.</p>
+
+    <div class="write-q">
+      <div class="write-label">WORD 1</div>
+      <div class="write-word">attention span</div>
+      <input class="write-line" type="text" placeholder="Write your sentence here...">
+      <div class="note">Hint: You can write about school, studying, or using your phone.</div>
+    </div>
+
+    <div class="write-q">
+      <div class="write-label">WORD 2</div>
+      <div class="write-word">fascination</div>
+      <input class="write-line" type="text" placeholder="Write your sentence here...">
+      <div class="note">Hint: Think about something you find deeply interesting.</div>
+    </div>
+
+    <div class="write-q">
+      <div class="write-label">WORD 3</div>
+      <div class="write-word">broaden</div>
+      <input class="write-line" type="text" placeholder="Write your sentence here...">
+      <div class="note">Hint: Think about travel, reading, or learning something new.</div>
+    </div>
+
+    <div class="write-q">
+      <div class="write-label">WORD 4</div>
+      <div class="write-word">seek</div>
+      <input class="write-line" type="text" placeholder="Write your sentence here...">
+    </div>
+
+    <div class="write-q">
+      <div class="write-label">WORD 5</div>
+      <div class="write-word">numerous</div>
+      <input class="write-line" type="text" placeholder="Write your sentence here...">
+    </div>
+  </div>
+
+  <!-- Part 2 Cloze -->
+  <div class="section">
+    <div class="section-title s-sec">Part 2 · Cloze Test 段落克漏字</div>
+    <p style="font-size:11px;color:var(--gray);margin-bottom:12px">Choose the best answer for each blank.</p>
+
+    <div class="cloze-box">
+      TED, which stands for Technology, Entertainment and Design, was
+      <span class="cloze-num">(1)</span>
+      <select class="cloze-sel" id="s1" onchange="checkSel('s1','A')">
+        <option value="">—</option>
+        <option value="A">（A）established</option>
+        <option value="B">（B）destroyed</option>
+        <option value="C">（C）forgotten</option>
+        <option value="D">（D）repeated</option>
+      </select>
+      in 1984. Its motto, "Ideas Worth Spreading," shows that TED uses the
+      <span class="cloze-num">(2)</span>
+      <select class="cloze-sel" id="s2" onchange="checkSel('s2','C')">
+        <option value="">—</option>
+        <option value="A">（A）problem</option>
+        <option value="B">（B）danger</option>
+        <option value="C">（C）platform</option>
+        <option value="D">（D）competition</option>
+      </select>
+      of public speaking to share important ideas with the world.
+
+      <br><br>
+
+      TED limits each talk to eighteen minutes because researchers know that the human
+      <span class="cloze-num">(3)</span>
+      <select class="cloze-sel" id="s3" onchange="checkSel('s3','B')">
+        <option value="">—</option>
+        <option value="A">（A）memory</option>
+        <option value="B">（B）attention span</option>
+        <option value="C">（C）vocabulary</option>
+        <option value="D">（D）speaking speed</option>
+      </select>
+      is limited. This rule forces speakers to
+      <span class="cloze-num">(4)</span>
+      <select class="cloze-sel" id="s4" onchange="checkSel('s4','A')">
+        <option value="">—</option>
+        <option value="A">（A）concentrate</option>
+        <option value="B">（B）ignore</option>
+        <option value="C">（C）repeat</option>
+        <option value="D">（D）avoid</option>
+      </select>
+      on their most important message.
+
+      <br><br>
+
+      TED has attracted
+      <span class="cloze-num">(5)</span>
+      <select class="cloze-sel" id="s5" onchange="checkSel('s5','D')">
+        <option value="">—</option>
+        <option value="A">（A）few</option>
+        <option value="B">（B）boring</option>
+        <option value="C">（C）unknown</option>
+        <option value="D">（D）numerous</option>
+      </select>
+      speakers from different fields. Director James Cameron shared his
+      <span class="cloze-num">(6)</span>
+      <select class="cloze-sel" id="s6" onchange="checkSel('s6','B')">
+        <option value="">—</option>
+        <option value="A">（A）boredom</option>
+        <option value="B">（B）fascination</option>
+        <option value="C">（C）fear</option>
+        <option value="D">（D）confusion</option>
+      </select>
+      with science fiction. These talks help the
+      <span class="cloze-num">(7)</span>
+      <select class="cloze-sel" id="s7" onchange="checkSel('s7','C')">
+        <option value="">—</option>
+        <option value="A">（A）speakers</option>
+        <option value="B">（B）organizers</option>
+        <option value="C">（C）audience</option>
+        <option value="D">（D）judges</option>
+      </select>
+      <span class="cloze-num">(8)</span>
+      <select class="cloze-sel" id="s8" onchange="checkSel('s8','A')">
+        <option value="">—</option>
+        <option value="A">（A）broaden</option>
+        <option value="B">（B）narrow</option>
+        <option value="C">（C）forget</option>
+        <option value="D">（D）limit</option>
+      </select>
+      their understanding of the world.
+    </div>
+  </div>
+
+  <!-- Part 3 Open -->
+  <div class="section">
+    <div class="section-title s-sec">Part 3 · Comprehension Questions</div>
+
+    <div class="open-q">
+      <div class="open-num">QUESTION 1</div>
+      <div class="open-text">Why does TED limit each talk to 18 minutes? Use information from the passage to support your answer.</div>
+      <textarea class="open-ans" placeholder="Write your answer in English (2–3 sentences)..."></textarea>
+    </div>
+
+    <div class="open-q">
+      <div class="open-num">QUESTION 2</div>
+      <div class="open-text">What does "Ideas Worth Spreading" mean? Give an example of an idea you think is worth spreading.</div>
+      <textarea class="open-ans" placeholder="Write your answer in English (2–3 sentences)..."></textarea>
+    </div>
+
+    <div class="open-q">
+      <div class="open-num">QUESTION 3</div>
+      <div class="open-text">Use the sentence pattern <strong>keep / leave / find + O + OC</strong> to write one sentence about TED Talks.</div>
+      <textarea class="open-ans" style="min-height:50px" placeholder="Example: I find TED Talks inspiring because..."></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ── CHALLENGE ───────────────────────────────────── -->
+<div id="tab-c" class="wrap" style="display:none">
+  <div class="level-badge c-badge">CHALLENGE · 程度較強</div>
+  <div class="ws-title">L7 TED Talks — Critical Thinking &amp; Writing</div>
+  <div class="ws-sub">Name: ________________　Class: ________________　Date: ________________</div>
+
+  <div class="action-bar">
+    <button class="btn btn-print" onclick="window.print()">🖨 列印</button>
+  </div>
+
+  <!-- Part 1 Critical Thinking -->
+  <div class="section">
+    <div class="section-title c-sec">Part 1 · Critical Thinking 批判思考</div>
+
+    <div class="open-q">
+      <div class="open-num">QUESTION 1 · Agree or Disagree</div>
+      <div class="open-text">Do you agree that 18 minutes is the ideal length for a talk? Use evidence from the passage <strong>and</strong> your own experience to support your opinion.</div>
+      <textarea class="open-ans" placeholder="Write at least 4 sentences. Start with: I (agree / disagree) that 18 minutes is the ideal length because..."></textarea>
+    </div>
+
+    <div class="open-q">
+      <div class="open-num">QUESTION 2 · Evaluation</div>
+      <div class="open-text">TED's motto is "Ideas Worth Spreading." What makes an idea "worth spreading"? Give two criteria and explain your reasoning.</div>
+      <textarea class="open-ans" placeholder="Criteria 1: An idea is worth spreading if...&#10;Criteria 2: An idea is worth spreading if..."></textarea>
+    </div>
+
+    <div class="open-q">
+      <div class="open-num">QUESTION 3 · Comparison</div>
+      <div class="open-text">How is watching a TED Talk different from reading a textbook? Which do you find more effective for learning, and why? Use at least one vocabulary word from this lesson.</div>
+      <textarea class="open-ans" placeholder="Write your answer in English (3–4 sentences)..."></textarea>
+    </div>
+
+    <div class="open-q">
+      <div class="open-num">QUESTION 4 · Application</div>
+      <div class="open-text">Rewrite the following sentence using the <strong>keep / leave / find</strong> pattern. Write at least two different versions.<br><br><em>"Watching TED Talks makes me feel motivated and makes me want to learn more."</em></div>
+      <textarea class="open-ans" style="min-height:80px" placeholder="Version 1: I find TED Talks...&#10;Version 2: Watching TED Talks leaves me..."></textarea>
+    </div>
+  </div>
+
+  <!-- Part 2 Essay -->
+  <div class="section">
+    <div class="section-title c-sec">Part 2 · Short Essay 短文寫作（約 150 字）</div>
+
+    <div class="essay-box">
+      <div class="essay-prompt">
+        <strong>Prompt:</strong> If you could give an 18-minute TED Talk, what idea would you want to spread — and why? Describe your topic, explain why it is important, and discuss how it could help your audience. Use at least <strong>3 vocabulary words</strong> from this lesson and at least <strong>one</strong> keep / leave / find sentence pattern.
+      </div>
+      <textarea class="essay-ans" id="essay" oninput="countWords()" placeholder="Start writing your TED Talk here...&#10;&#10;Example opening: If I could give a TED Talk, I would talk about _____ because _____. This idea has the power to..."></textarea>
+      <div class="word-count" id="wc">0 words</div>
+    </div>
+
+    <div class="open-q">
+      <div class="open-num">BONUS · Recommend a TED Talk</div>
+      <div class="open-text">Have you watched a TED Talk that you would recommend? Write the title and speaker, and explain in 2–3 sentences why it is worth spreading. If you haven't watched one, search online and choose one that interests you.</div>
+      <textarea class="open-ans" placeholder="Title: ________________  Speaker: ________________&#10;&#10;I recommend this talk because..."></textarea>
+    </div>
+  </div>
+</div>
+
+<script>
+// Tab switching
+function showTab(tab, el){
+  ['f','s','c'].forEach(t=>{
+    document.getElementById('tab-'+t).style.display=t===tab?'block':'none';
+  });
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// Foundation check
+const fAns={f1:'established',f2:'attention span',f3:'broaden',f4:'numerous',f5:'fascination',f6:'concentrate',f7:'platform',f8:'audience',f9:'seek',f10:'insight'};
+function checkF(){
+  Object.keys(fAns).forEach(id=>{
+    const inp=document.getElementById(id);
+    if(!inp) return;
+    const val=inp.value.trim().toLowerCase();
+    inp.classList.remove('correct','wrong');
+    if(val===fAns[id]) inp.classList.add('correct');
+    else if(val.length>1) inp.classList.add('wrong');
+  });
+}
+function resetF(){
+  Object.keys(fAns).forEach(id=>{
+    const inp=document.getElementById(id);
+    if(inp){inp.value='';inp.classList.remove('correct','wrong');}
+  });
+}
+
+// Standard cloze check
+function checkSel(id, correct){
+  const sel=document.getElementById(id);
+  sel.classList.remove('correct','wrong');
+  if(sel.value===correct) sel.classList.add('correct');
+  else if(sel.value) sel.classList.add('wrong');
+}
+function checkS(){
+  const ans={s1:'A',s2:'C',s3:'B',s4:'A',s5:'D',s6:'B',s7:'C',s8:'A'};
+  Object.keys(ans).forEach(id=>checkSel(id,ans[id]));
+}
+function resetS(){
+  ['s1','s2','s3','s4','s5','s6','s7','s8'].forEach(id=>{
+    const s=document.getElementById(id);
+    if(s){s.value='';s.classList.remove('correct','wrong');}
+  });
+}
+
+// Word count
+function countWords(){
+  const text=document.getElementById('essay').value.trim();
+  const count=text?text.split(/\s+/).length:0;
+  const el=document.getElementById('wc');
+  el.textContent=count+' words';
+  el.style.color=count>=150?'var(--teal)':count>=100?'var(--amber)':'var(--gray)';
+}
+</script>
+</body>
+</html>
