@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L7 TED Talks — 全英語教案</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--brown:#6B4C35;--ink:#2C2C2A;--bg:#F4F1EC;--cream:#EDE9E0;--lg:#D8D4CC;--gray:#9A9590;--teal:#1D9E75;--red:#C0392B;--blue:#2B4C8C;--amber:#BA7517}
+body{font-family:'Noto Sans TC','Helvetica Neue',sans-serif;background:var(--bg);color:var(--ink);font-size:13px;line-height:1.7}
+.header{background:var(--brown);color:#fff;padding:20px 28px}
+.header h1{font-size:18px;font-weight:700;margin-bottom:4px}
+.header p{font-size:11px;opacity:.7}
+.meta-bar{background:var(--ink);padding:10px 28px;display:flex;gap:24px;flex-wrap:wrap}
+.meta-item{font-size:11px;color:rgba(255,255,255,.6)}
+.meta-item strong{color:#fff}
+.tab-bar{background:#1a1a1a;display:flex}
+.tab{padding:11px 24px;font-size:12px;color:rgba(255,255,255,.4);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s}
+.tab.active{color:#fff;border-color:var(--brown)}
+.wrap{max-width:960px;margin:0 auto;padding:24px}
+
+/* objectives */
+.obj-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:24px}
+.obj-card{background:#fff;border:1px solid var(--lg);border-radius:6px;padding:14px;border-top:3px solid var(--brown)}
+.obj-num{font-size:9px;color:var(--brown);font-weight:700;letter-spacing:2px;margin-bottom:6px}
+.obj-text{font-size:12px;color:var(--ink);line-height:1.65}
+
+/* activity block */
+.activity{background:#fff;border:1px solid var(--lg);border-radius:8px;margin-bottom:16px;overflow:hidden}
+.activity-header{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--cream);border-bottom:1px solid var(--lg);cursor:pointer}
+.activity-header:hover{background:#E5E1D8}
+.act-time{background:var(--brown);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:10px;white-space:nowrap}
+.act-title{font-size:13px;font-weight:700;color:var(--ink)}
+.act-type{font-size:10px;color:var(--gray);margin-left:auto;white-space:nowrap}
+.act-arrow{font-size:12px;color:var(--gray);transition:transform .2s}
+.act-arrow.open{transform:rotate(90deg)}
+.activity-body{padding:16px;display:none}
+.activity-body.open{display:block}
+
+/* purpose */
+.purpose{background:var(--cream);border-left:3px solid var(--brown);padding:8px 12px;font-size:11px;color:var(--gray);margin-bottom:14px;border-radius:0 4px 4px 0}
+.purpose strong{color:var(--brown)}
+
+/* dialogue */
+.dialogue{margin-bottom:14px}
+.dialogue-title{font-size:10px;font-weight:700;color:var(--brown);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.d-row{display:flex;gap:10px;margin-bottom:6px;align-items:flex-start}
+.d-speaker{min-width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;flex-shrink:0;margin-top:2px}
+.d-t{background:var(--brown)}
+.d-s{background:var(--blue)}
+.d-text{background:#f8f6f2;border:1px solid var(--lg);border-radius:4px;padding:8px 12px;font-size:12px;line-height:1.65;flex:1}
+.d-text.teacher{border-left:3px solid var(--brown)}
+.d-text.student{border-left:3px solid var(--blue);color:var(--gray);font-style:italic}
+.d-text .en{color:var(--ink);font-weight:500}
+.d-text .note{font-size:10px;color:var(--gray);margin-top:4px;font-style:italic}
+
+/* instruction box */
+.instr{background:var(--ink);border-radius:6px;padding:14px 16px;margin-bottom:12px}
+.instr-label{font-size:9px;color:#666;letter-spacing:2px;margin-bottom:6px}
+.instr-text{font-size:12px;color:#CCCCCC;line-height:1.75}
+.instr-text .key{color:var(--brown);font-weight:700}
+
+/* task box */
+.task{border:1px solid var(--lg);border-radius:6px;padding:14px;margin-bottom:12px}
+.task-label{font-size:9px;font-weight:700;color:var(--brown);letter-spacing:2px;margin-bottom:8px}
+.task-content{font-size:12px;color:var(--ink);line-height:1.75}
+
+/* vocab grid */
+.vocab-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.vocab-item{background:var(--cream);border:1px solid var(--lg);border-radius:4px;padding:8px 10px}
+.v-word{font-size:13px;font-weight:700;color:var(--brown)}
+.v-pron{font-size:10px;color:var(--gray);margin:1px 0}
+.v-def{font-size:11px;color:var(--ink)}
+.v-ex{font-size:10px;color:var(--gray);font-style:italic;margin-top:2px}
+
+/* tip */
+.tip{background:rgba(186,117,23,.08);border:1px solid rgba(186,117,23,.3);border-radius:4px;padding:8px 12px;font-size:11px;color:var(--amber);margin-bottom:10px}
+.tip::before{content:"💡 "}
+
+/* section divider */
+.section-div{font-size:10px;font-weight:700;color:var(--brown);letter-spacing:2px;text-transform:uppercase;padding:8px 0;border-bottom:1px solid var(--lg);margin:16px 0 12px}
+
+/* summary table */
+.sum-table{width:100%;border-collapse:collapse;font-size:12px}
+.sum-table th{background:var(--ink);color:rgba(255,255,255,.7);padding:8px 12px;text-align:left;font-weight:600}
+.sum-table td{padding:8px 12px;border:1px solid var(--lg)}
+.sum-table tr:nth-child(even) td{background:var(--cream)}
+
+@media print{
+  .tab-bar,.act-arrow{display:none}
+  .activity-body{display:block!important}
+  .activity-header{cursor:default}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>龍騰版 L7 TED Talks: Spreading Ideas for a Better World</h1>
+  <p>全英語教案（EMI）· Claude 根據課文生成 · 含完整師生對話示範</p>
+</div>
+
+<div class="meta-bar">
+  <div class="meta-item"><strong>年級</strong> 高一</div>
+  <div class="meta-item"><strong>節數</strong> 2 節課 · 各 50 分鐘</div>
+  <div class="meta-item"><strong>教學語言</strong> 全英語（EMI）</div>
+  <div class="meta-item"><strong>課本頁碼</strong> P.153–P.159</div>
+  <div class="meta-item"><strong>口說形式</strong> Pair Work + 個人發表</div>
+</div>
+
+<div class="tab-bar">
+  <div class="tab active" onclick="showTab('obj',this)">學習目標</div>
+  <div class="tab" onclick="showTab('d1',this)">第一節課（50 min）</div>
+  <div class="tab" onclick="showTab('d2',this)">第二節課（50 min）</div>
+  <div class="tab" onclick="showTab('sum',this)">課程總覽</div>
+</div>
+
+<!-- 學習目標 -->
+<div id="tab-obj" class="wrap">
+  <div class="obj-grid">
+    <div class="obj-card">
+      <div class="obj-num">OBJECTIVE 01 · 閱讀</div>
+      <div class="obj-text">Students can identify the main idea and supporting details of an informational text about TED Talks.</div>
+    </div>
+    <div class="obj-card">
+      <div class="obj-num">OBJECTIVE 02 · 詞彙</div>
+      <div class="obj-text">Students can use key vocabulary (seek, audience, concentrate, attention span, numerous, fascination) in context.</div>
+    </div>
+    <div class="obj-card">
+      <div class="obj-num">OBJECTIVE 03 · 文法</div>
+      <div class="obj-text">Students can use the <em>keep / leave / find + O + OC</em> sentence pattern to express states and observations.</div>
+    </div>
+    <div class="obj-card">
+      <div class="obj-num">OBJECTIVE 04 · 口說</div>
+      <div class="obj-text">Students can share a personal opinion about a topic they care about in English, using at least 3 sentences.</div>
+    </div>
+    <div class="obj-card">
+      <div class="obj-num">OBJECTIVE 05 · 思辨</div>
+      <div class="obj-text">Students can explain why TED limits talks to 18 minutes and connect this to their own experience of attention span.</div>
+    </div>
+    <div class="obj-card">
+      <div class="obj-num">OBJECTIVE 06 · 寫作</div>
+      <div class="obj-text">Students can write a 2–3 sentence Exit Ticket response in English summarizing what they learned.</div>
+    </div>
+  </div>
+
+  <div class="task">
+    <div class="task-label">本課核心問題 Essential Question</div>
+    <div class="task-content" style="font-size:15px;color:var(--brown);font-style:italic">"If you could give an 18-minute TED Talk, what idea would you want to spread — and why?"</div>
+    <div style="font-size:11px;color:var(--gray);margin-top:8px">這個問題貫穿兩節課，第一節引入，第二節作為口說任務的核心。</div>
+  </div>
+</div>
+
+<!-- 第一節課 -->
+<div id="tab-d1" class="wrap" style="display:none">
+
+  <!-- Activity 1 -->
+  <div class="activity">
+    <div class="activity-header" onclick="toggleAct(this)">
+      <div class="act-time">0–8 min</div>
+      <div class="act-title">Warm-Up: Have You Watched a TED Talk?</div>
+      <div class="act-type">全班 · 師生對話</div>
+      <div class="act-arrow">▶</div>
+    </div>
+    <div class="activity-body">
+      <div class="purpose"><strong>目的：</strong>激活先備知識，建立學習動機，引導學生思考「演講」的概念。</div>
+      <div class="dialogue-title">完整師生對話示範</div>
+
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher"><span class="en">"Good morning, everyone. Before we start, I have a question for you. Have you ever watched a TED Talk?"</span><div class="note">環顧全班，停頓等待回應</div></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-s">S</div>
+        <div class="d-text student"><span class="en">"Yes." / "No." / "I've seen some on YouTube."</span></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher"><span class="en">"Great! For those who have — what was it about? Can you share in one sentence?"</span><div class="note">指名 2–3 位學生回答</div></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-s">S</div>
+        <div class="d-text student"><span class="en">"It was about how to be happy." / "Someone talked about climate change."</span></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher"><span class="en">"Interesting! TED Talks cover almost every topic — from science to art to everyday life. Today, we're going to read about TED and find out what makes it so special. Let's start with one key question:"</span></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher" style="font-size:13px;font-weight:700"><span class="en">"Why do you think TED Talks are only 18 minutes long?"</span><div class="note">寫在黑板上，讓學生先猜，不給答案——第一節結束前回來確認</div></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-s">S</div>
+        <div class="d-text student"><span class="en">"Because people get bored?" / "To save time?" / "I don't know."</span></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher"><span class="en">"Good guesses! Keep this question in mind — the answer is in today's reading. Let's find out together."</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Activity 2 -->
+  <div class="activity">
+    <div class="activity-header" onclick="toggleAct(this)">
+      <div class="act-time">8–15 min</div>
+      <div class="act-title">Pre-Reading: TED Prediction Activity</div>
+      <div class="act-type">Pair Work · 預測策略</div>
+      <div class="act-arrow">▶</div>
+    </div>
+    <div class="activity-body">
+      <div class="purpose"><strong>目的：</strong>使用預測策略降低閱讀焦慮，同時練習口說。</div>
+      <div class="dialogue-title">老師指令示範</div>
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher"><span class="en">"Now, look at the infographic on page 153. Don't read the text yet — just look at the pictures and numbers."</span></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher"><span class="en">"Turn to your partner. You have 2 minutes. Tell your partner: What do you think this article is about? Use this sentence starter:"</span></div>
+      </div>
+      <div class="instr">
+        <div class="instr-label">板書 / 投影</div>
+        <div class="instr-text"><span class="key">"I think this article is about _____ because I can see _____."</span></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher"><span class="en">"Ready? Go!"</span><div class="note">計時 2 分鐘，巡視教室聆聽，記下有趣的想法</div></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher"><span class="en">"Time's up. Who wants to share? What did you and your partner predict?"</span></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-s">S</div>
+        <div class="d-text student"><span class="en">"We think it's about public speaking because we can see a person on a stage."</span></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher"><span class="en">"Great prediction! Let's see if you're right. Open your books to page 155."</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Activity 3 -->
+  <div class="activity">
+    <div class="activity-header" onclick="toggleAct(this)">
+      <div class="act-time">15–35 min</div>
+      <div class="act-title">Reading: Topic Sentence Strategy</div>
+      <div class="act-type">個人 + Pair Check · 閱讀策略</div>
+      <div class="act-arrow">▶</div>
+    </div>
+    <div class="activity-body">
+      <div class="purpose"><strong>目的：</strong>練習找主題句，建立段落理解能力。</div>
+      <div class="dialogue-title">老師指令示範</div>
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher"><span class="en">"We're going to read pages 155 to 159. As you read, I want you to do one thing: underline the topic sentence of each paragraph."</span></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher"><span class="en">"Remember — a topic sentence tells you the main idea of the paragraph. It's usually the first sentence, but not always. Ready? You have 10 minutes. Go."</span><div class="note">計時，教師巡視，觀察學生在哪裡停下來</div></div>
+      </div>
+
+      <div class="section-div">Pair Check（閱讀後）</div>
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher"><span class="en">"OK, time's up. Compare with your partner — did you underline the same sentences? If you disagree, discuss why."</span><div class="note">給 2 分鐘討論</div></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher"><span class="en">"Let's check together. Paragraph 1 — who can read the topic sentence they underlined?"</span></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-s">S</div>
+        <div class="d-text student"><span class="en">"TED stands for Technology, Entertainment and Design."</span></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher"><span class="en">"Good. That's the topic sentence — it tells us what TED stands for, which is the main idea of that paragraph. Now paragraph 2..."</span><div class="note">繼續逐段確認，重點放在學生選錯的段落</div></div>
+      </div>
+
+      <div class="tip">如果學生選了細節句而非主題句，引導他們問：「Does this sentence give a main idea, or is it a detail that supports another idea?」</div>
+    </div>
+  </div>
+
+  <!-- Activity 4 -->
+  <div class="activity">
+    <div class="activity-header" onclick="toggleAct(this)">
+      <div class="act-time">35–45 min</div>
+      <div class="act-title">Comprehension Check: 18 Minutes — Why?</div>
+      <div class="act-type">全班討論 · 回應開場問題</div>
+      <div class="act-arrow">▶</div>
+    </div>
+    <div class="activity-body">
+      <div class="purpose"><strong>目的：</strong>回應課堂開場的核心問題，確認閱讀理解。</div>
+      <div class="dialogue-title">完整師生對話示範</div>
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher"><span class="en">"OK — remember the question I wrote on the board at the beginning? Why are TED Talks 18 minutes long? Now that you've read the article, who can answer?"</span></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-s">S</div>
+        <div class="d-text student"><span class="en">"Because people can't concentrate for a long time."</span></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher"><span class="en">"Exactly! What's the word for how long we can stay focused?"</span></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-s">S</div>
+        <div class="d-text student"><span class="en">"Attention span?"</span></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher"><span class="en">"Perfect. Attention span. So TED uses 18 minutes because it fits within the human attention span. Does that make sense to you? Do you agree?"</span></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-s">S</div>
+        <div class="d-text student"><span class="en">"Yes, I think so." / "Sometimes I can focus longer if the topic is interesting."</span></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher"><span class="en">"Great point! The topic matters. TED picks topics that are worth spreading — that's their motto. What's TED's motto?"</span></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-s">S</div>
+        <div class="d-text student"><span class="en">"Ideas worth spreading."</span></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher"><span class="en">"Exactly. Keep that in mind for next class — you'll use it."</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Activity 5 Exit Ticket D1 -->
+  <div class="activity">
+    <div class="activity-header" onclick="toggleAct(this)">
+      <div class="act-time">45–50 min</div>
+      <div class="act-title">Exit Ticket: One Thing You Learned</div>
+      <div class="act-type">個人書寫 · 2–3 句英文</div>
+      <div class="act-arrow">▶</div>
+    </div>
+    <div class="activity-body">
+      <div class="purpose"><strong>目的：</strong>確認本節學習成效，練習英文書寫。</div>
+      <div class="instr">
+        <div class="instr-label">投影 / 板書</div>
+        <div class="instr-text">Write 2–3 sentences in English:<br>
+        <span class="key">1. One thing I learned about TED today is _____.</span><br>
+        <span class="key">2. I think the 18-minute rule is a good / bad idea because _____.</span></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher"><span class="en">"Before you leave, write 2–3 sentences on a piece of paper. You have 5 minutes. This is your exit ticket — I'll read them after class to see what you understood."</span></div>
+      </div>
+      <div class="tip">收集後快速瀏覽，找出常見的誤解或有趣的觀點，下節課開頭用來引入文法活動。</div>
+    </div>
+  </div>
+</div>
+
+<!-- 第二節課 -->
+<div id="tab-d2" class="wrap" style="display:none">
+
+  <!-- Activity 1 D2 -->
+  <div class="activity">
+    <div class="activity-header" onclick="toggleAct(this)">
+      <div class="act-time">0–8 min</div>
+      <div class="act-title">Warm-Up: Vocabulary Review Game</div>
+      <div class="act-type">全班 · 快問快答</div>
+      <div class="act-arrow">▶</div>
+    </div>
+    <div class="activity-body">
+      <div class="purpose"><strong>目的：</strong>複習上節課詞彙，活化課堂氣氛。</div>
+
+      <div class="vocab-grid">
+        <div class="vocab-item">
+          <div class="v-word">seek</div>
+          <div class="v-pron">/siːk/ v.</div>
+          <div class="v-def">to look for or try to get something</div>
+          <div class="v-ex">"She seeks to improve her English every day."</div>
+        </div>
+        <div class="vocab-item">
+          <div class="v-word">audience</div>
+          <div class="v-pron">/ˈɔːdiəns/ n.</div>
+          <div class="v-def">a group of people who watch or listen</div>
+          <div class="v-ex">"The audience applauded after the talk."</div>
+        </div>
+        <div class="vocab-item">
+          <div class="v-word">concentrate</div>
+          <div class="v-pron">/ˈkɒnsntreɪt/ v.</div>
+          <div class="v-def">to focus your attention on something</div>
+          <div class="v-ex">"It's hard to concentrate in a noisy room."</div>
+        </div>
+        <div class="vocab-item">
+          <div class="v-word">attention span</div>
+          <div class="v-pron">n. phrase</div>
+          <div class="v-def">the length of time you can stay focused</div>
+          <div class="v-ex">"Children have a shorter attention span than adults."</div>
+        </div>
+        <div class="vocab-item">
+          <div class="v-word">numerous</div>
+          <div class="v-pron">/ˈnjuːmərəs/ adj.</div>
+          <div class="v-def">many; a large number of</div>
+          <div class="v-ex">"There are numerous TED Talks online."</div>
+        </div>
+        <div class="vocab-item">
+          <div class="v-word">fascination</div>
+          <div class="v-pron">/ˌfæsɪˈneɪʃn/ n.</div>
+          <div class="v-def">a strong interest or attraction</div>
+          <div class="v-ex">"His fascination with science led him to TED."</div>
+        </div>
+      </div>
+
+      <div class="dialogue-title">快問快答遊戲示範</div>
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher"><span class="en">"Let's do a quick vocabulary warm-up. I'll give you a definition — you tell me the word. Ready?"</span></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher"><span class="en">"The length of time you can stay focused on something. What's the word?"</span></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-s">S</div>
+        <div class="d-text student"><span class="en">"Attention span!"</span></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher"><span class="en">"Good! Next — a strong interest or attraction toward something."</span></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-s">S</div>
+        <div class="d-text student"><span class="en">"Fascination!"</span></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher"><span class="en">"Perfect. Last one — many, a large number of."</span></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-s">S</div>
+        <div class="d-text student"><span class="en">"Numerous!"</span></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher"><span class="en">"Excellent! You remember everything from last class. Let's move on to grammar."</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Activity 2 D2 Grammar -->
+  <div class="activity">
+    <div class="activity-header" onclick="toggleAct(this)">
+      <div class="act-time">8–25 min</div>
+      <div class="act-title">Grammar: keep / leave / find + O + OC</div>
+      <div class="act-type">教師講解 + 練習</div>
+      <div class="act-arrow">▶</div>
+    </div>
+    <div class="activity-body">
+      <div class="purpose"><strong>目的：</strong>理解並練習 keep/leave/find + 受詞 + 受詞補語的句型。</div>
+
+      <div class="dialogue-title">句型介紹示範</div>
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher"><span class="en">"Today we're looking at a very useful sentence pattern: keep, leave, and find — followed by an object and an object complement. Let me show you what I mean."</span></div>
+      </div>
+
+      <div class="instr">
+        <div class="instr-label">板書 / 投影</div>
+        <div class="instr-text">
+          <span class="key">keep + O + OC</span> → "TED keeps its talks <strong>short</strong>."<br>
+          <span class="key">leave + O + OC</span> → "A good talk leaves the audience <strong>thinking</strong>."<br>
+          <span class="key">find + O + OC</span> → "Many people find TED Talks <strong>inspiring</strong>."
+        </div>
+      </div>
+
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher"><span class="en">"Notice the pattern — after keep, leave, or find, we have a noun (the object) and then an adjective or a verb-ing (the object complement). The complement describes the state of the object."</span></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher"><span class="en">"Let's try one together. How would you say: 'Watching TED Talks makes me feel inspired'? Use the find pattern."</span></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-s">S</div>
+        <div class="d-text student"><span class="en">"I find TED Talks... inspiring?"</span></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher"><span class="en">"Exactly! 'I find TED Talks inspiring.' The object is 'TED Talks,' and the complement is 'inspiring.' Perfect."</span></div>
+      </div>
+
+      <div class="section-div">配對練習（Pair Work · 5 min）</div>
+      <div class="instr">
+        <div class="instr-label">練習題</div>
+        <div class="instr-text">
+          Complete the sentences with your partner:<br>
+          1. The 18-minute rule keeps the audience _____ (adj./V-ing).<br>
+          2. A boring talk can leave the listeners _____ (adj./V-ing).<br>
+          3. I find learning English _____.<br>
+          4. TED keeps its motto _____ — "Ideas Worth Spreading."
+        </div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher"><span class="en">"Work with your partner. Complete these four sentences using the keep/leave/find pattern. You have 4 minutes."</span></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher"><span class="en">"Let's check. Number 1 — who wants to share?"</span></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-s">S</div>
+        <div class="d-text student"><span class="en">"The 18-minute rule keeps the audience focused."</span></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher"><span class="en">"Great! 'Focused' works perfectly. Any other answers? 'Engaged'? 'Interested'? All good options."</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Activity 3 D2 Speaking -->
+  <div class="activity">
+    <div class="activity-header" onclick="toggleAct(this)">
+      <div class="act-time">25–42 min</div>
+      <div class="act-title">Speaking Task: My 1-Minute TED Talk</div>
+      <div class="act-type">Pair Work → 個人發表</div>
+      <div class="act-arrow">▶</div>
+    </div>
+    <div class="activity-body">
+      <div class="purpose"><strong>目的：</strong>整合本課詞彙和句型，練習口說表達個人觀點。</div>
+
+      <div class="dialogue-title">任務說明示範</div>
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher"><span class="en">"Now it's your turn to be a TED speaker. Here's your challenge:"</span></div>
+      </div>
+
+      <div class="instr">
+        <div class="instr-label">投影 / 板書</div>
+        <div class="instr-text">
+          <span class="key">My 1-Minute TED Talk</span><br><br>
+          Topic: "If I could give a TED Talk, I would talk about _____ because _____."<br><br>
+          You must use:<br>
+          · At least <span class="key">2 vocabulary words</span> from this lesson<br>
+          · At least <span class="key">1 sentence</span> with keep / leave / find<br>
+          · At least <span class="key">3 sentences</span> total
+        </div>
+      </div>
+
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher"><span class="en">"Step 1: Think about your topic for 1 minute. It can be anything you care about — music, sports, food, the environment, anything."</span><div class="note">給學生 1 分鐘思考</div></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher"><span class="en">"Step 2: Share with your partner. Each person speaks for about 1 minute. Your partner listens and then asks one question. Ready? Go!"</span><div class="note">計時 4 分鐘（各 2 分鐘），巡視教室給予鼓勵</div></div>
+      </div>
+
+      <div class="section-div">個人發表（全班）</div>
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher"><span class="en">"Great job, everyone. Now I'd like to invite a few people to share with the class. Who's brave enough to go first?"</span><div class="note">等待自願者，若無人舉手，可說："I heard a great idea from [seat number]. Would you like to share?"</div></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-s">S</div>
+        <div class="d-text student"><span class="en">"If I could give a TED Talk, I would talk about mental health because I find this topic important. I think many students keep their feelings hidden, and that can leave them feeling lonely. We need to talk about it more."</span></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher"><span class="en">"That was excellent! I noticed you used 'find' and 'keep' and 'leave' — all three patterns! And your topic is definitely worth spreading. Thank you."</span><div class="note">具體指出學生做對的地方，不只說 good job</div></div>
+      </div>
+
+      <div class="tip">若時間允許，請 3–4 位學生發表。發表後可讓全班投票最喜歡哪個 TED Talk 主題。</div>
+    </div>
+  </div>
+
+  <!-- Activity 4 D2 Exit Ticket -->
+  <div class="activity">
+    <div class="activity-header" onclick="toggleAct(this)">
+      <div class="act-time">42–50 min</div>
+      <div class="act-title">Exit Ticket + Lesson Wrap-Up</div>
+      <div class="act-type">個人書寫 + 全班總結</div>
+      <div class="act-arrow">▶</div>
+    </div>
+    <div class="activity-body">
+      <div class="purpose"><strong>目的：</strong>總結兩節課學習，確認掌握程度。</div>
+
+      <div class="dialogue-title">課程總結示範</div>
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher"><span class="en">"We're almost done. Let's look back at what we learned over these two classes."</span></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher"><span class="en">"What does TED stand for?"</span></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-s">S</div>
+        <div class="d-text student"><span class="en">"Technology, Entertainment and Design."</span></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher"><span class="en">"And what's TED's motto?"</span></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-s">S</div>
+        <div class="d-text student"><span class="en">"Ideas worth spreading."</span></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher"><span class="en">"Perfect. And today you all shared your own ideas worth spreading. That's what TED is all about."</span></div>
+      </div>
+
+      <div class="instr">
+        <div class="instr-label">Exit Ticket（最後 5 分鐘）</div>
+        <div class="instr-text">
+          Write in English:<br>
+          <span class="key">1. The grammar pattern I learned today is _____. Example: _____.</span><br>
+          <span class="key">2. If I were a TED speaker, I would talk about _____ because _____.</span>
+        </div>
+      </div>
+
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher"><span class="en">"Last thing — write your exit ticket. Two sentences. You have 5 minutes. This is your chance to show me what you learned. Go ahead."</span></div>
+      </div>
+      <div class="d-row">
+        <div class="d-speaker d-t">T</div>
+        <div class="d-text teacher"><span class="en">"Great work today, everyone. See you next time!"</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 課程總覽 -->
+<div id="tab-sum" class="wrap" style="display:none">
+  <table class="sum-table">
+    <thead>
+      <tr>
+        <th>節次</th>
+        <th>時間</th>
+        <th>活動</th>
+        <th>形式</th>
+        <th>技能</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>第一節</td><td>0–8 min</td><td>Warm-Up: Have You Watched a TED Talk?</td><td>全班師生對話</td><td>口說 · 思辨</td></tr>
+      <tr><td>第一節</td><td>8–15 min</td><td>Pre-Reading: Prediction Activity</td><td>Pair Work</td><td>口說 · 預測策略</td></tr>
+      <tr><td>第一節</td><td>15–35 min</td><td>Reading: Topic Sentence Strategy</td><td>個人 + Pair Check</td><td>閱讀 · 策略</td></tr>
+      <tr><td>第一節</td><td>35–45 min</td><td>Comprehension Check: 18 Minutes — Why?</td><td>全班討論</td><td>閱讀 · 口說</td></tr>
+      <tr><td>第一節</td><td>45–50 min</td><td>Exit Ticket</td><td>個人書寫</td><td>寫作</td></tr>
+      <tr><td>第二節</td><td>0–8 min</td><td>Vocabulary Review Game</td><td>全班快問快答</td><td>詞彙</td></tr>
+      <tr><td>第二節</td><td>8–25 min</td><td>Grammar: keep/leave/find + O + OC</td><td>講解 + Pair Work</td><td>文法</td></tr>
+      <tr><td>第二節</td><td>25–42 min</td><td>Speaking: My 1-Minute TED Talk</td><td>Pair Work → 個人發表</td><td>口說 · 整合</td></tr>
+      <tr><td>第二節</td><td>42–50 min</td><td>Exit Ticket + Wrap-Up</td><td>個人書寫 + 全班</td><td>寫作 · 總結</td></tr>
+    </tbody>
+  </table>
+
+  <div style="margin-top:16px" class="task">
+    <div class="task-label">老師備課提醒</div>
+    <div class="task-content">
+      · Exit Ticket 第一節收回後，快速瀏覽找出常見誤解，第二節開頭用來導入文法<br>
+      · 口說任務不強制要求文法完全正確，重點是學生開口說、用到詞彙和句型<br>
+      · 若時間不夠，Pair Work 的個人發表可改為只收 Exit Ticket，不需要全班分享<br>
+      · 這份教案是 Claude 根據課文生成的草稿，老師可依班級狀況調整時間分配
+    </div>
+  </div>
+</div>
+
+<script>
+function showTab(tab, el){
+  ['obj','d1','d2','sum'].forEach(t=>{
+    document.getElementById('tab-'+t).style.display=t===tab?'block':'none';
+  });
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function toggleAct(header){
+  const body=header.nextElementSibling;
+  const arrow=header.querySelector('.act-arrow');
+  const isOpen=body.classList.contains('open');
+  body.classList.toggle('open',!isOpen);
+  arrow.classList.toggle('open',!isOpen);
+}
+
+// 預設展開第一個活動
+document.querySelectorAll('.activity-header')[0].click();
+</script>
+</body>
+</html>
