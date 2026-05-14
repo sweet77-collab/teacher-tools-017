@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TED Anchor Script · L7 TED Talks</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--red:#E62B1E;--dark:#111;--teal:#1D9E75;--amber:#BA7517;--purple:#534AB7}
+body{font-family:'Noto Sans TC','Helvetica Neue',sans-serif;background:var(--dark);color:#fff;min-height:100vh;display:flex;flex-direction:column}
+.bar{background:#0a0a0a;border-bottom:2px solid var(--red);padding:10px 20px;display:flex;align-items:center;justify-content:space-between}
+.ted-tag{background:var(--red);color:#fff;font-size:12px;font-weight:700;padding:3px 10px;letter-spacing:1px}
+.bar-title{font-size:12px;color:#aaa;letter-spacing:1px;margin-left:10px}
+.rec{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--red);font-weight:700;letter-spacing:2px}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--red);animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+.main{display:grid;grid-template-columns:1fr 300px;flex:1}
+.left{padding:22px;display:flex;flex-direction:column;gap:14px}
+.right{background:#0a0a0a;border-left:1px solid #1a1a1a;display:flex;flex-direction:column}
+.panel{padding:16px;border-bottom:1px solid #111}
+.panel-title{font-size:8px;letter-spacing:2px;color:#333;text-transform:uppercase;margin-bottom:10px}
+.lbl{font-size:9px;letter-spacing:2px;color:#444;text-transform:uppercase;margin-bottom:6px}
+
+/* passage */
+.passage-card{background:#0f0f0f;border:1px solid #1a1a1a;border-left:3px solid var(--red);border-radius:6px;padding:16px}
+.passage-label{font-size:9px;color:var(--red);font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.passage-text{font-size:12px;color:#aaa;line-height:1.9}
+.passage-text strong{color:#ccc}
+
+/* vocab chips */
+.vocab-row{display:flex;flex-wrap:wrap;gap:6px}
+.chip{padding:4px 11px;border-radius:20px;font-size:11px;font-weight:500;cursor:pointer;transition:all .15s;user-select:none;border:1px solid var(--amber);color:var(--amber);background:rgba(186,117,23,.08)}
+.chip:hover{background:rgba(186,117,23,.2)}
+.chip.used{background:rgba(29,158,117,.15);border-color:var(--teal);color:var(--teal);pointer-events:none;text-decoration:line-through}
+
+/* write area */
+.write-wrap{background:#0f0f0f;border:1px solid #1a1a1a;border-radius:6px;padding:16px;position:relative;flex:1}
+.write-hint{font-size:10px;color:#333;margin-bottom:8px;line-height:1.6}
+.write-ta{width:100%;background:transparent;border:none;outline:none;color:#fff;font-size:14px;line-height:1.85;resize:none;min-height:160px;font-family:inherit}
+.write-ta::placeholder{color:#2a2a2a}
+.wc{position:absolute;bottom:10px;right:12px;font-size:9px;color:#333}
+
+/* score panel */
+.big-score{font-size:48px;font-weight:700;color:var(--teal);line-height:1}
+.score-sub{font-size:9px;color:#444;margin-top:2px}
+.bars{display:flex;flex-direction:column;gap:7px;margin-top:10px}
+.br{display:flex;align-items:center;gap:7px}
+.br-lbl{font-size:10px;color:#666;min-width:72px}
+.br-track{flex:1;height:5px;background:#1a1a1a;border-radius:3px;overflow:hidden}
+.br-fill{height:100%;border-radius:3px;transition:width .5s}
+.br-val{font-size:10px;font-weight:700;min-width:22px;text-align:right}
+.fb{background:#111;border-radius:5px;padding:12px;font-size:11px;line-height:1.8;color:#555;min-height:70px}
+.fb .g{color:var(--teal)}.fb .m{color:var(--amber)}
+
+/* topic selector */
+.topic-row{display:flex;gap:6px;flex-wrap:wrap}
+.topic-btn{padding:5px 12px;border-radius:4px;font-size:10px;cursor:pointer;font-family:inherit;border:1px solid #222;background:transparent;color:#555;transition:all .15s}
+.topic-btn:hover{border-color:var(--red);color:var(--red)}
+.topic-btn.active{background:rgba(230,43,30,.12);border-color:var(--red);color:var(--red)}
+
+.action-row{display:flex;gap:10px;align-items:center}
+.btn{padding:9px 20px;border-radius:4px;border:none;cursor:pointer;font-size:12px;font-weight:700;font-family:inherit;letter-spacing:.5px;transition:all .15s}
+.btn-go{background:var(--red);color:#fff}.btn-go:hover{background:#c0392b}
+.btn-go:disabled{background:#222;color:#555;cursor:not-allowed}
+.btn-sec{background:transparent;color:#555;border:1px solid #222}.btn-sec:hover{color:#aaa;border-color:#444}
+.timer{font-size:20px;font-weight:700;color:var(--teal);margin-left:auto;font-variant-numeric:tabular-nums}
+.timer.warn{color:var(--amber)}.timer.over{color:var(--red)}
+
+/* name overlay */
+.name-overlay{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:100;display:flex;align-items:center;justify-content:center}
+.name-card{background:#111;border:1px solid #1a1a1a;border-radius:8px;padding:32px;text-align:center;max-width:380px;width:90%}
+.name-card h2{font-size:18px;font-weight:700;margin-bottom:6px}
+.name-card p{font-size:12px;color:#555;margin-bottom:20px;line-height:1.6}
+.name-input{width:100%;background:#0f0f0f;border:1px solid #333;border-radius:4px;padding:10px 14px;color:#fff;font-size:14px;font-family:inherit;outline:none;text-align:center}
+.name-input:focus{border-color:var(--teal)}
+.name-input::placeholder{color:#333}
+
+/* result overlay */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:99;align-items:center;justify-content:center}
+.overlay.show{display:flex}
+.result-card{background:#111;border:1px solid #1a1a1a;border-radius:8px;padding:28px;text-align:center;max-width:460px;width:90%}
+.result-identity{font-size:12px;color:#555;letter-spacing:1px;margin-bottom:4px}
+.result-grade{font-size:58px;font-weight:700;font-family:Georgia,serif;margin-bottom:4px}
+.result-pts{font-size:18px;color:var(--teal);margin-bottom:6px}
+.result-topic{font-size:11px;color:#444;margin-bottom:8px}
+.result-msg{font-size:13px;color:#777;line-height:1.7;margin-bottom:10px}
+.screenshot-hint{font-size:10px;color:#333;padding:7px 12px;border:1px dashed #222;border-radius:4px;margin-bottom:14px}
+.vocab-result{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-bottom:14px}
+</style>
+</head>
+<body>
+
+<!-- Name overlay -->
+<div class="name-overlay" id="name-overlay">
+  <div class="name-card">
+    <div class="ted-tag" style="display:inline-block;margin-bottom:16px">TED ANCHOR</div>
+    <h2>開始前請填寫資料</h2>
+    <p>完成後截圖結果頁，傳給老師當作成績紀錄。</p>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px">
+      <input class="name-input" id="input-class" placeholder="班級（例：405）" maxlength="10">
+      <input class="name-input" id="input-name" placeholder="姓名" maxlength="10">
+      <input class="name-input" id="input-num" placeholder="座號（例：18）" maxlength="5">
+    </div>
+    <button class="btn btn-go" style="width:100%" onclick="confirmName()">開始遊戲 ▶</button>
+  </div>
+</div>
+
+<div class="bar">
+  <div style="display:flex;align-items:center">
+    <div class="ted-tag">TED</div>
+    <span class="bar-title">ANCHOR SCRIPT　·　L7 TED Talks　·　主播播報稿挑戰</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:14px">
+    <span id="player-bar" style="font-size:11px;color:#444;letter-spacing:1px"></span>
+    <div class="rec"><div class="dot"></div>ON AIR</div>
+  </div>
+</div>
+
+<div class="main">
+<div class="left">
+
+  <!-- Topic selector -->
+  <div>
+    <div class="lbl">選擇播報主題</div>
+    <div class="topic-row" id="topic-row"></div>
+  </div>
+
+  <!-- Passage -->
+  <div>
+    <div class="lbl">參考段落（來自 L7 課文）</div>
+    <div class="passage-card">
+      <div class="passage-label" id="p-label"></div>
+      <div class="passage-text" id="p-text"></div>
+    </div>
+  </div>
+
+  <!-- Vocab -->
+  <div>
+    <div class="lbl">必用詞彙　<span style="color:#333;font-size:8px">點擊插入播報稿</span></div>
+    <div class="vocab-row" id="vocab-row"></div>
+  </div>
+
+  <!-- Writing -->
+  <div style="flex:1;display:flex;flex-direction:column">
+    <div class="lbl">你的主播播報稿</div>
+    <div class="write-wrap">
+      <div class="write-hint" style="color:#aaa;font-size:11px;border-left:3px solid var(--amber);padding-left:8px;margin-bottom:10px">📺 以 TED 新聞主播的身份，根據上方段落寫一段英文摘要播報稿（目標 60–100 字）。用上必用詞彙可獲得更高分。</div>
+      <textarea class="write-ta" id="ta" placeholder="Good evening. Tonight on TED News..."></textarea>
+      <div class="wc" id="wc">0 words</div>
+    </div>
+  </div>
+
+  <div class="action-row">
+    <button class="btn btn-go" id="go-btn" onclick="submitScript()">▶ 送出播報稿</button>
+    <button class="btn btn-sec" onclick="clearScript()">清除</button>
+    <div class="timer" id="timer">—</div>
+  </div>
+
+</div>
+
+<div class="right">
+  <div class="panel">
+    <div class="panel-title">本次評分</div>
+    <div class="big-score" id="big-score">—</div>
+    <div class="score-sub">總分 / 100</div>
+    <div class="bars">
+      <div class="br"><span class="br-lbl">詞彙使用</span><div class="br-track"><div class="br-fill" id="bf-v" style="width:0%;background:var(--teal)"></div></div><span class="br-val" id="bv-v">—</span></div>
+      <div class="br"><span class="br-lbl">內容準確</span><div class="br-track"><div class="br-fill" id="bf-c" style="width:0%;background:var(--amber)"></div></div><span class="br-val" id="bv-c">—</span></div>
+      <div class="br"><span class="br-lbl">句型多樣</span><div class="br-track"><div class="br-fill" id="bf-s" style="width:0%;background:var(--purple)"></div></div><span class="br-val" id="bv-s">—</span></div>
+      <div class="br"><span class="br-lbl">字數</span><div class="br-track"><div class="br-fill" id="bf-l" style="width:0%;background:var(--red)"></div></div><span class="br-val" id="bv-l">—</span></div>
+    </div>
+  </div>
+  <div class="panel" style="flex:1">
+    <div class="panel-title">主播評語</div>
+    <div class="fb" id="fb">送出播報稿後，這裡會出現評語。</div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">詞彙使用狀況</div>
+    <div id="vocab-status" style="font-size:10px;color:#2a2a2a">選好主題後開始寫作。</div>
+  </div>
+</div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="result-card">
+    <div class="result-identity" id="r-identity"></div>
+    <div class="result-grade" id="r-grade"></div>
+    <div class="result-pts" id="r-pts"></div>
+    <div class="result-topic" id="r-topic"></div>
+    <div class="result-msg" id="r-msg"></div>
+    <div class="screenshot-hint">📸 截圖這個畫面，傳給老師當作成績紀錄</div>
+    <div class="vocab-result" id="r-vocab"></div>
+    <button class="btn btn-go" onclick="tryAgain()" style="width:100%">再試一次</button>
+  </div>
+</div>
+
+<script>
+const topics = [
+  {
+    id:0, label:"Passage 1 · What is TED?",
+    text:`TED stands for <strong>Technology, Entertainment and Design</strong>. It was <strong>established</strong> in <strong>1984</strong> as a <strong>conference</strong> where leading thinkers share their ideas. Over the years, TED has grown <strong>increasingly</strong> popular, building a large <strong>collection</strong> of talks online. Its motto is <em>"Ideas Worth Spreading."</em>`,
+    vocab:["TED","established","1984","conference","increasingly","collection","ideas worth spreading"],
+    keywords:["technology","entertainment","design","motto","thinkers","popular","share"]
+  },
+  {
+    id:1, label:"Passage 2 · The 18-Minute Rule",
+    text:`TED limits every talk to <strong>eighteen minutes</strong>. This is because the human <strong>attention span</strong> is limited — it becomes harder to <strong>concentrate</strong> after a long period. The short format forces speakers to focus on their key message and deliver it to the <strong>audience</strong> in a powerful way.`,
+    vocab:["eighteen minutes","attention span","concentrate","audience","format","deliver"],
+    keywords:["limit","short","focus","key","message","powerful","human","forces"]
+  },
+  {
+    id:2, label:"Passage 3 · Celebrity Speakers",
+    text:`TED has invited many <strong>celebrities</strong> to share their ideas. Chef Jamie Oliver used the <strong>platform</strong> to discuss food education. Director James Cameron talked about his <strong>fascination</strong> with science <strong>fiction</strong>. Bill Gates used his <strong>foundation</strong>'s work to <strong>seek</strong> solutions to global diseases.`,
+    vocab:["celebrities","platform","fascination","fiction","foundation","seek"],
+    keywords:["invited","oliver","cameron","gates","global","solutions","education","discuss"]
+  },
+  {
+    id:3, label:"Passage 4 · Why TED Goes Viral",
+    text:`TED Talks spread quickly online because they are short, focused, and insightful. Speakers must present only their <strong>central</strong> message. Watching a TED Talk is like standing on the shoulders of a giant — you gain a lifetime of knowledge in just eighteen minutes. This <strong>broadens</strong> our thinking in <strong>numerous</strong> ways.`,
+    vocab:["central","broaden","numerous","insightful","spread","knowledge"],
+    keywords:["viral","short","focused","lifetime","giant","thinking","quickly","present"]
+  },
+  {
+    id:4, label:"Passage 5 · How to Prepare",
+    text:`Preparing a great TED Talk takes time and practice. Speakers must first choose a topic they are passionate about, then <strong>concentrate</strong> on one key idea. They should use stories and examples to <strong>engage</strong> the <strong>audience</strong>. A strong opening and closing help make the talk <strong>memorable</strong> and worth <strong>spreading</strong>.`,
+    vocab:["concentrate","engage","audience","memorable","spreading","passionate"],
+    keywords:["prepare","practice","stories","examples","opening","closing","strong","key"]
+  }
+];
+
+let currentTopic = topics[0];
+let usedVocab = new Set();
+let playerName = '', playerClass = '', playerNum = '';
+let timerInterval = null, timeLeft = 300, timerStarted = false;
+
+function confirmName() {
+  playerClass = document.getElementById('input-class').value.trim();
+  playerName = document.getElementById('input-name').value.trim() || '匿名';
+  playerNum = document.getElementById('input-num').value.trim();
+  const display = [playerClass, playerNum ? playerNum+'號' : '', playerName].filter(Boolean).join(' ');
+  document.getElementById('player-bar').textContent = '👤 ' + display;
+  document.getElementById('name-overlay').style.display = 'none';
+  startTimer();
+}
+
+function startTimer() {
+  timerStarted = true;
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    const m = Math.floor(timeLeft / 60);
+    const s = timeLeft % 60;
+    const el = document.getElementById('timer');
+    el.textContent = m + ':' + String(s).padStart(2, '0');
+    if (timeLeft <= 60) el.className = 'timer warn';
+    if (timeLeft <= 0) { el.className = 'timer over'; clearInterval(timerInterval); submitScript(); }
+  }, 1000);
+}
+
+// Build topic buttons
+function buildTopics() {
+  const row = document.getElementById('topic-row');
+  row.innerHTML = '';
+  topics.forEach(t => {
+    const btn = document.createElement('button');
+    btn.className = 'topic-btn' + (t.id === currentTopic.id ? ' active' : '');
+    btn.textContent = 'Passage ' + (t.id + 1);
+    btn.onclick = () => selectTopic(t.id);
+    row.appendChild(btn);
+  });
+}
+
+function selectTopic(id) {
+  currentTopic = topics[id];
+  usedVocab.clear();
+  document.getElementById('ta').value = '';
+  document.getElementById('wc').textContent = '0 words';
+  document.getElementById('p-label').textContent = currentTopic.label;
+  document.getElementById('p-text').innerHTML = currentTopic.text;
+  buildTopics();
+  renderVocab();
+  resetScores();
+  updateVocabStatus();
+}
+
+function renderVocab() {
+  const vr = document.getElementById('vocab-row');
+  vr.innerHTML = '';
+  currentTopic.vocab.forEach(w => {
+    const c = document.createElement('div');
+    c.className = 'chip' + (usedVocab.has(w) ? ' used' : '');
+    c.textContent = w;
+    c.onclick = () => insertVocab(w);
+    vr.appendChild(c);
+  });
+}
+
+function insertVocab(w) {
+  if (usedVocab.has(w)) return;
+  const ta = document.getElementById('ta');
+  const pos = ta.selectionStart;
+  ta.value = ta.value.slice(0, pos) + w + ' ' + ta.value.slice(pos);
+  ta.focus();
+  onInput();
+}
+
+function onInput() {
+  const text = document.getElementById('ta').value;
+  const wc = text.split(/\s+/).filter(Boolean).length;
+  document.getElementById('wc').textContent = wc + ' words';
+  currentTopic.vocab.forEach(w => {
+    if (text.toLowerCase().includes(w.toLowerCase())) usedVocab.add(w);
+  });
+  renderVocab();
+  updateVocabStatus();
+}
+
+function updateVocabStatus() {
+  const vs = document.getElementById('vocab-status');
+  const total = currentTopic.vocab.length;
+  const used = usedVocab.size;
+  vs.innerHTML = currentTopic.vocab.map(w => {
+    const hit = usedVocab.has(w);
+    return `<span style="display:inline-block;padding:2px 7px;margin:2px;border-radius:10px;font-size:9px;background:${hit?'rgba(29,158,117,.15)':'rgba(255,255,255,.03)'};border:1px solid ${hit?'var(--teal)':'#222'};color:${hit?'var(--teal)':'#333'}">${hit?'✓ ':''  }${w}</span>`;
+  }).join('') + `<div style="margin-top:6px;font-size:9px;color:#444">已用 ${used} / ${total} 個必用詞彙</div>`;
+}
+
+function submitScript() {
+  clearInterval(timerInterval);
+  const text = document.getElementById('ta').value.trim();
+  if (!text) { alert('請先寫好播報稿！'); return; }
+
+  const words = text.split(/\s+/).filter(Boolean).length;
+
+  // Vocab score (40)
+  let vHit = 0;
+  currentTopic.vocab.forEach(w => { if (text.toLowerCase().includes(w.toLowerCase())) vHit++; });
+  const vScore = Math.round((vHit / currentTopic.vocab.length) * 40);
+
+  // Content score (30)
+  let cHit = currentTopic.keywords.filter(k => text.toLowerCase().includes(k)).length;
+  const cScore = Math.min(30, Math.round(cHit * 4 + (words >= 40 ? 6 : 0)));
+
+  // Sentence variety (20)
+  const sents = text.split(/[.!?]+/).filter(s => s.trim().length > 4);
+  const sScore = Math.min(20, sents.length * 4 + (sents.length >= 3 ? 8 : 0));
+
+  // Length score (10)
+  const lScore = words < 20 ? 2 : words < 40 ? 5 : words < 60 ? 7 : words <= 120 ? 10 : 7;
+
+  const total = vScore + cScore + sScore + lScore;
+
+  setBar('v', vScore, 40); setBar('c', cScore, 30); setBar('s', sScore, 20); setBar('l', lScore, 10);
+  document.getElementById('big-score').textContent = total;
+
+  // Feedback
+  const miss = currentTopic.vocab.filter(w => !text.toLowerCase().includes(w.toLowerCase()));
+  let fb = '';
+  if (vHit === currentTopic.vocab.length) fb += '<span class="g">✓ 所有必用詞彙都用上了！</span><br>';
+  else fb += '<span class="m">✗ 還沒用到：' + miss.join(', ') + '</span><br>';
+  if (words < 40) fb += '<span style="color:#444;font-style:italic">摘要有點短，試著多說一點。</span><br>';
+  else if (words > 120) fb += '<span style="color:#444;font-style:italic">有點長了，主播摘要要精簡！</span><br>';
+  if (sents.length < 3) fb += '<span style="color:#444;font-style:italic">試著用更多不同的句子。</span><br>';
+  if (total >= 85) fb += '<span class="g">完美播報！你是頂級 TED 主播！</span>';
+  else if (total >= 70) fb += '<span class="g">播報精彩，再練習幾次！</span>';
+  else if (total >= 55) fb += '<span class="m">不錯的開始！把所有詞彙都用進去！</span>';
+  else fb += '<span class="m">繼續練習，記得使用必用詞彙！</span>';
+  document.getElementById('fb').innerHTML = fb;
+
+  // Result overlay
+  const grade = total >= 90?'A+':total>=80?'A':total>=70?'B':total>=55?'C':'D';
+  const gc = total>=80?'var(--teal)':total>=55?'var(--amber)':'var(--red)';
+  const msgs = {'A+':'完美！這段播報稿可以直接上 TED 新聞！','A':'精彩！詞彙運用自然流暢。','B':'不錯！再加入更多詞彙會更好。','C':'有進步空間，把必用詞彙都塞進去！','D':'再仔細讀課文，重新試試！'};
+
+  const identity = [playerClass, playerNum?playerNum+'號':'', playerName].filter(Boolean).join(' ');
+  document.getElementById('r-identity').textContent = '📺 ' + identity + ' 的播報成績';
+  document.getElementById('r-grade').textContent = grade;
+  document.getElementById('r-grade').style.color = gc;
+  document.getElementById('r-pts').textContent = total + ' / 100';
+  document.getElementById('r-topic').textContent = '主題：' + currentTopic.label;
+  document.getElementById('r-msg').textContent = msgs[grade];
+
+  const rv = document.getElementById('r-vocab');
+  rv.innerHTML = '';
+  currentTopic.vocab.forEach(w => {
+    const hit = text.toLowerCase().includes(w.toLowerCase());
+    const d = document.createElement('div');
+    d.style.cssText = `padding:3px 10px;border-radius:20px;font-size:10px;background:${hit?'rgba(29,158,117,.15)':'rgba(230,43,30,.1)'};border:1px solid ${hit?'var(--teal)':'#333'};color:${hit?'var(--teal)':'#555'}`;
+    d.textContent = (hit?'✓ ':'✗ ') + w;
+    rv.appendChild(d);
+  });
+
+  document.getElementById('overlay').classList.add('show');
+}
+
+function setBar(id, val, max) {
+  document.getElementById('bf-'+id).style.width = Math.round(val/max*100)+'%';
+  document.getElementById('bv-'+id).textContent = val;
+}
+
+function resetScores() {
+  document.getElementById('big-score').textContent = '—';
+  document.getElementById('fb').textContent = '送出播報稿後，這裡會出現評語。';
+  ['v','c','s','l'].forEach(id => {
+    document.getElementById('bf-'+id).style.width = '0%';
+    document.getElementById('bv-'+id).textContent = '—';
+  });
+}
+
+function clearScript() {
+  document.getElementById('ta').value = '';
+  document.getElementById('wc').textContent = '0 words';
+  usedVocab.clear();
+  renderVocab();
+  updateVocabStatus();
+  resetScores();
+}
+
+function tryAgain() {
+  document.getElementById('overlay').classList.remove('show');
+  clearScript();
+}
+
+document.getElementById('ta').addEventListener('input', onInput);
+document.getElementById('input-name').addEventListener('keydown', e => { if(e.key==='Enter') confirmName(); });
+
+// Init
+selectTopic(0);
+buildTopics();
+</script>
+</body>
+</html>
