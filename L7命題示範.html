@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L7 TED Talks 命題示範</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--brown:#6B4C35;--ink:#2C2C2A;--bg:#F4F1EC;--cream:#EDE9E0;--lg:#D8D4CC;--gray:#9A9590;--teal:#1D9E75;--red:#C0392B;--amber:#BA7517}
+body{font-family:'Noto Sans TC','Helvetica Neue',sans-serif;background:var(--bg);color:var(--ink);font-size:13px;line-height:1.8}
+.header{background:var(--brown);color:#fff;padding:16px 28px}
+.header h1{font-size:16px;font-weight:700;margin-bottom:3px}
+.header p{font-size:11px;opacity:.7}
+.tab-bar{background:var(--ink);display:flex}
+.tab{padding:10px 20px;font-size:12px;color:rgba(255,255,255,.4);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap}
+.tab.active{color:#fff;border-color:var(--brown)}
+.wrap{max-width:860px;margin:0 auto;padding:24px}
+.section-title{font-size:12px;font-weight:700;color:var(--brown);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;padding-bottom:6px;border-bottom:2px solid var(--brown)}
+.score-bar{background:var(--ink);border-radius:6px;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.score-big{font-size:28px;font-weight:700;color:#fff}
+.score-label{font-size:9px;color:rgba(255,255,255,.4);margin-top:2px}
+.btn{padding:7px 16px;border-radius:4px;border:none;cursor:pointer;font-size:11px;font-weight:700;font-family:inherit}
+.btn-show{background:var(--brown);color:#fff}
+.btn-reset{background:transparent;color:rgba(255,255,255,.4);border:1px solid rgba(255,255,255,.2)}
+.q-block{background:#fff;border:1px solid var(--lg);border-radius:6px;padding:16px 18px;margin-bottom:10px}
+.q-num{font-size:9px;color:var(--gray);letter-spacing:1px;margin-bottom:6px}
+.q-text{font-size:13.5px;color:var(--ink);margin-bottom:10px;line-height:1.9}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.opt{padding:7px 11px;border:1px solid var(--lg);border-radius:4px;font-size:12px;cursor:pointer;transition:all .15s;background:#fff}
+.opt:hover{border-color:var(--brown);background:var(--cream)}
+.opt.correct{background:rgba(29,158,117,.1);border-color:var(--teal);color:var(--teal)}
+.opt.wrong{background:rgba(192,57,43,.08);border-color:var(--red);color:var(--red)}
+.opt.revealed{background:rgba(29,158,117,.1);border-color:var(--teal);color:var(--teal)}
+.explain{margin-top:10px;padding:9px 13px;background:var(--cream);border-left:3px solid var(--brown);border-radius:0 4px 4px 0;font-size:11px;color:var(--gray);display:none;line-height:1.65}
+.explain.show{display:block}
+.note{background:var(--cream);border-left:3px solid var(--brown);padding:10px 14px;font-size:11px;color:var(--gray);border-radius:0 4px 4px 0;margin-bottom:14px;line-height:1.7}
+.note strong{color:var(--brown)}
+.txt-input{border:none;border-bottom:1.5px solid var(--ink);background:transparent;font-size:13px;font-family:inherit;outline:none;min-width:90px;text-align:center;padding:0 4px;color:var(--ink);transition:border-color .2s}
+.txt-input.correct{border-color:var(--teal);color:var(--teal)}
+.txt-input.wrong{border-color:var(--red);color:var(--red)}
+.passage-box{background:#fff;border:1px solid var(--lg);border-radius:6px;padding:20px 22px;font-size:13.5px;line-height:2.4;margin-bottom:14px}
+.word-bank{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px}
+.word-chip{padding:4px 14px;border:1px solid var(--brown);border-radius:20px;font-size:12px;color:var(--brown);cursor:default;transition:all .2s}
+.word-chip.used{background:var(--cream);color:var(--gray);border-color:var(--lg);text-decoration:line-through}
+.word-chip.extra{border-style:dashed;color:var(--gray);border-color:var(--lg)}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>龍騰版 L7 TED Talks — 命題示範</h1>
+  <p>Claude 上傳課文 PDF 後自動生成 · 單選題、文意選填、克漏字三種題型 · 附答案與干擾說明</p>
+</div>
+
+<div class="tab-bar">
+  <div class="tab active" onclick="showTab('mc',this)">單選題（10題）</div>
+  <div class="tab" onclick="showTab('vocab',this)">文意選填（10題）</div>
+  <div class="tab" onclick="showTab('cloze',this)">克漏字（10題）</div>
+  <div class="tab" onclick="showTab('explain',this)">命題說明</div>
+</div>
+
+<!-- ── 單選題 ─────────────────────────────────────── -->
+<div id="tab-mc" class="wrap">
+  <div class="score-bar">
+    <div><div class="score-big" id="mc-score">0 / 10</div><div class="score-label">答對題數</div></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-show" onclick="showAllMC()">顯示所有答案</button>
+      <button class="btn btn-reset" onclick="resetMC()">重設</button>
+    </div>
+  </div>
+  <div class="section-title">Part I · Multiple Choice</div>
+
+  <div class="q-block" id="mc1">
+    <div class="q-num">Q1 · 主旨理解 · 中</div>
+    <div class="q-text">According to the passage, TED was established mainly to</div>
+    <div class="options">
+      <div class="opt" onclick="answerMC(1,'A')">（A）provide entertainment for technology workers</div>
+      <div class="opt" onclick="answerMC(1,'B')">（B）create a platform for sharing ideas across different fields</div>
+      <div class="opt" onclick="answerMC(1,'C')">（C）organize technology conferences for engineers only</div>
+      <div class="opt" onclick="answerMC(1,'D')">（D）promote science fiction books and films</div>
+    </div>
+    <div class="explain" id="exp-mc1">✓ <strong>答案：B</strong>　TED 的宗旨是 "Ideas Worth Spreading"，目的是跨領域分享想法。<br>🎯 <strong>干擾：</strong>A 混淆 Technology 讓人以為只針對科技工作者；C 縮小範圍為工程師；D 與 Cameron 演講混淆。</div>
+  </div>
+
+  <div class="q-block" id="mc2">
+    <div class="q-num">Q2 · 細節理解 · 易</div>
+    <div class="q-text">How long is each TED Talk limited to?</div>
+    <div class="options">
+      <div class="opt" onclick="answerMC(2,'A')">（A）Fifteen minutes</div>
+      <div class="opt" onclick="answerMC(2,'B')">（B）Twenty minutes</div>
+      <div class="opt" onclick="answerMC(2,'C')">（C）Eighteen minutes</div>
+      <div class="opt" onclick="answerMC(2,'D')">（D）Thirty minutes</div>
+    </div>
+    <div class="explain" id="exp-mc2">✓ <strong>答案：C</strong>　課文明確說明每場 TED Talk 限制在 18 分鐘以內。<br>🎯 <strong>干擾：</strong>A（15分）和B（20分）是最接近的數字；D（30分）是常見演講長度。</div>
+  </div>
+
+  <div class="q-block" id="mc3">
+    <div class="q-num">Q3 · 推論 · 中</div>
+    <div class="q-text">Why does TED limit each talk to eighteen minutes?</div>
+    <div class="options">
+      <div class="opt" onclick="answerMC(3,'A')">（A）To allow more speakers to present at each conference</div>
+      <div class="opt" onclick="answerMC(3,'B')">（B）Because the audience's attention span is limited</div>
+      <div class="opt" onclick="answerMC(3,'C')">（C）To make the talks suitable for TV broadcast</div>
+      <div class="opt" onclick="answerMC(3,'D')">（D）Because speakers find shorter talks easier to memorize</div>
+    </div>
+    <div class="explain" id="exp-mc3">✓ <strong>答案：B</strong>　課文說明 18 分鐘是因為人類注意力有限，讓講者專注核心訊息。<br>🎯 <strong>干擾：</strong>A 是合理猜測但課文未提；C 加入 TV 元素；D 從講者角度切入似乎合理但非重點。</div>
+  </div>
+
+  <div class="q-block" id="mc4">
+    <div class="q-num">Q4 · 詞彙 · 易</div>
+    <div class="q-text">The word "increasingly" in "TED Talks have an increasingly large collection of videos" is closest in meaning to</div>
+    <div class="options">
+      <div class="opt" onclick="answerMC(4,'A')">（A）suddenly</div>
+      <div class="opt" onclick="answerMC(4,'B')">（B）more and more</div>
+      <div class="opt" onclick="answerMC(4,'C')">（C）surprisingly</div>
+      <div class="opt" onclick="answerMC(4,'D')">（D）recently</div>
+    </div>
+    <div class="explain" id="exp-mc4">✓ <strong>答案：B</strong>　"Increasingly" 表示「越來越」，強調持續增長趨勢。<br>🎯 <strong>干擾：</strong>A 和 C 改變語氣；D 只說時間點沒有「持續增加」的意涵。</div>
+  </div>
+
+  <div class="q-block" id="mc5">
+    <div class="q-num">Q5 · 語意推論 · 難</div>
+    <div class="q-text">What does "standing on the shoulders of a giant" mean in the passage?</div>
+    <div class="options">
+      <div class="opt" onclick="answerMC(5,'A')">（A）TED speakers are physically taller than average people</div>
+      <div class="opt" onclick="answerMC(5,'B')">（B）Viewers gain a broader perspective from others' knowledge</div>
+      <div class="opt" onclick="answerMC(5,'C')">（C）TED Talks are only for tall and intelligent people</div>
+      <div class="opt" onclick="answerMC(5,'D')">（D）The audience must stand during TED conferences</div>
+    </div>
+    <div class="explain" id="exp-mc5">✓ <strong>答案：B</strong>　「站在巨人的肩膀上」是比喻，藉由他人知識獲得更寬廣視野。<br>🎯 <strong>干擾：</strong>A 和 D 是字面解讀；C 加入歧視性條件讓學生思考是否合理。</div>
+  </div>
+
+  <div class="q-block" id="mc6">
+    <div class="q-num">Q6 · 細節 · 中</div>
+    <div class="q-text">Which person is NOT mentioned as a TED Talk speaker in the passage?</div>
+    <div class="options">
+      <div class="opt" onclick="answerMC(6,'A')">（A）Jamie Oliver</div>
+      <div class="opt" onclick="answerMC(6,'B')">（B）James Cameron</div>
+      <div class="opt" onclick="answerMC(6,'C')">（C）Elon Musk</div>
+      <div class="opt" onclick="answerMC(6,'D')">（D）Bill Gates</div>
+    </div>
+    <div class="explain" id="exp-mc6">✓ <strong>答案：C</strong>　課文提到 Jamie Oliver、James Cameron 和 Bill Gates，沒有 Elon Musk。<br>🎯 <strong>干擾：</strong>Elon Musk 是知名科技人物，學生容易誤以為他也在課文中。</div>
+  </div>
+
+  <div class="q-block" id="mc7">
+    <div class="q-num">Q7 · 細節 · 易</div>
+    <div class="q-text">What was the topic of Jamie Oliver's TED Talk?</div>
+    <div class="options">
+      <div class="opt" onclick="answerMC(7,'A')">（A）Climate change and the environment</div>
+      <div class="opt" onclick="answerMC(7,'B')">（B）Teaching children about healthy food</div>
+      <div class="opt" onclick="answerMC(7,'C')">（C）New cooking techniques for restaurants</div>
+      <div class="opt" onclick="answerMC(7,'D')">（D）The future of the food industry</div>
+    </div>
+    <div class="explain" id="exp-mc7">✓ <strong>答案：B</strong>　課文說 Jamie Oliver 的演講關於教孩子認識健康食物。<br>🎯 <strong>干擾：</strong>C 和 D 都與食物有關但偏商業面；A 是當代熱門話題容易聯想。</div>
+  </div>
+
+  <div class="q-block" id="mc8">
+    <div class="q-num">Q8 · 全文理解 · 難</div>
+    <div class="q-text">What is the main idea of this passage?</div>
+    <div class="options">
+      <div class="opt" onclick="answerMC(8,'A')">（A）Famous people give better speeches than ordinary people</div>
+      <div class="opt" onclick="answerMC(8,'B')">（B）TED Talks are an effective way to spread valuable ideas</div>
+      <div class="opt" onclick="answerMC(8,'C')">（C）Technology conferences are more popular than ever</div>
+      <div class="opt" onclick="answerMC(8,'D')">（D）Eighteen minutes is the perfect length for any presentation</div>
+    </div>
+    <div class="explain" id="exp-mc8">✓ <strong>答案：B</strong>　本文主旨是介紹 TED Talks 如何有效傳播有價值的想法。<br>🎯 <strong>干擾：</strong>A 以偏概全；C 只聚焦科技；D 把18分鐘過度延伸到所有簡報。</div>
+  </div>
+
+  <div class="q-block" id="mc9">
+    <div class="q-num">Q9 · 詞彙應用 · 中</div>
+    <div class="q-text">The word "seek" in "people seek to broaden their knowledge" means</div>
+    <div class="options">
+      <div class="opt" onclick="answerMC(9,'A')">（A）avoid</div>
+      <div class="opt" onclick="answerMC(9,'B')">（B）pretend</div>
+      <div class="opt" onclick="answerMC(9,'C')">（C）try to find or obtain</div>
+      <div class="opt" onclick="answerMC(9,'D')">（D）refuse</div>
+    </div>
+    <div class="explain" id="exp-mc9">✓ <strong>答案：C</strong>　"Seek" 意為「尋求、努力獲得」。<br>🎯 <strong>干擾：</strong>A 和 D 是反義；B 是語意陷阱。</div>
+  </div>
+
+  <div class="q-block" id="mc10">
+    <div class="q-num">Q10 · 推論 · 難</div>
+    <div class="q-text">Based on the passage, which statement about TED Talks is most accurate?</div>
+    <div class="options">
+      <div class="opt" onclick="answerMC(10,'A')">（A）They are only for people who work in technology</div>
+      <div class="opt" onclick="answerMC(10,'B')">（B）They focus on entertainment rather than education</div>
+      <div class="opt" onclick="answerMC(10,'C')">（C）They bring together diverse ideas to inspire a global audience</div>
+      <div class="opt" onclick="answerMC(10,'D')">（D）They require speakers to have a university degree</div>
+    </div>
+    <div class="explain" id="exp-mc10">✓ <strong>答案：C</strong>　TED 跨越科技、娛樂、設計，面向全球傳播多元想法。<br>🎯 <strong>干擾：</strong>A 限縮到科技領域；B 混淆 TED 的 E（Entertainment）為娛樂節目；D 是無中生有的條件。</div>
+  </div>
+</div>
+
+<!-- ── 文意選填 ─────────────────────────────────────── -->
+<div id="tab-vocab" class="wrap" style="display:none">
+  <div class="score-bar">
+    <div><div class="score-big" id="vocab-score">0 / 10</div><div class="score-label">答對題數</div></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-show" onclick="showAllVocab()">顯示所有答案</button>
+      <button class="btn btn-reset" onclick="resetVocab()">重設</button>
+    </div>
+  </div>
+  <div class="section-title">Part II · Vocabulary in Context 文意選填</div>
+
+  <div class="note">
+    請從以下 12 個詞彙中選出 10 個，依文意填入下方文章空格中。（每個詞彙只用一次，有 2 個詞彙為多餘選項。）
+  </div>
+
+  <div class="word-bank" id="word-bank">
+    <div class="word-chip" id="chip-audience">audience</div>
+    <div class="word-chip" id="chip-broaden">broaden</div>
+    <div class="word-chip" id="chip-celebrities">celebrities</div>
+    <div class="word-chip" id="chip-concentrate">concentrate</div>
+    <div class="word-chip" id="chip-established">established</div>
+    <div class="word-chip" id="chip-fascination">fascination</div>
+    <div class="word-chip" id="chip-foundation">foundation</div>
+    <div class="word-chip" id="chip-increasingly">increasingly</div>
+    <div class="word-chip" id="chip-numerous">numerous</div>
+    <div class="word-chip" id="chip-platform">platform</div>
+    <div class="word-chip" id="chip-seek">seek</div>
+    <div class="word-chip" id="chip-discuss">discuss</div>
+  </div>
+
+  <div class="passage-box">
+    <p style="margin-bottom:8px;font-size:11px;color:var(--gray);letter-spacing:1px">PASSAGE — TED TALKS: SPREADING IDEAS FOR A BETTER WORLD</p>
+
+    TED was <strong>(1)</strong> <input class="txt-input" id="v1" data-ans="established" data-chip="established" oninput="checkVocab('v1')" placeholder="　　　　">
+    in 1984 as a small conference. Over the decades, it has become
+    <strong>(2)</strong> <input class="txt-input" id="v2" data-ans="increasingly" data-chip="increasingly" oninput="checkVocab('v2')" placeholder="　　　　">
+    popular, attracting millions of viewers worldwide. TED serves as a global
+    <strong>(3)</strong> <input class="txt-input" id="v3" data-ans="platform" data-chip="platform" oninput="checkVocab('v3')" placeholder="　　　　">
+    where people from all walks of life can share their most important ideas.
+
+    <br><br>
+
+    One of TED's great strengths is its ability to attract
+    <strong>(4)</strong> <input class="txt-input" id="v4" data-ans="celebrities" data-chip="celebrities" oninput="checkVocab('v4')" placeholder="　　　　">
+    from various fields. Chef Jamie Oliver used TED to
+    <strong>(5)</strong> <input class="txt-input" id="v5" data-ans="discuss" data-chip="discuss" oninput="checkVocab('v5')" placeholder="　　　　">
+    the importance of food education, while director James Cameron shared his
+    <strong>(6)</strong> <input class="txt-input" id="v6" data-ans="fascination" data-chip="fascination" oninput="checkVocab('v6')" placeholder="　　　　">
+    with science fiction. These talks help
+    <strong>(7)</strong> <input class="txt-input" id="v7" data-ans="broaden" data-chip="broaden" oninput="checkVocab('v7')" placeholder="　　　　">
+    our understanding of the world.
+
+    <br><br>
+
+    Each speaker is asked to
+    <strong>(8)</strong> <input class="txt-input" id="v8" data-ans="concentrate" data-chip="concentrate" oninput="checkVocab('v8')" placeholder="　　　　">
+    on one central idea and present it within eighteen minutes. This rule exists because the human
+    <strong>(9)</strong> <input class="txt-input" id="v9" data-ans="audience" data-chip="audience" oninput="checkVocab('v9')" placeholder="　　　　">
+    can only maintain focus for a limited time. Today, there are
+    <strong>(10)</strong> <input class="txt-input" id="v10" data-ans="numerous" data-chip="numerous" oninput="checkVocab('v10')" placeholder="　　　　">
+    TED videos available online, and people around the world continue to seek knowledge through these inspiring talks.
+  </div>
+
+  <div class="note">
+    <strong>答案：</strong>1. established　2. increasingly　3. platform　4. celebrities　5. discuss　6. fascination　7. broaden　8. concentrate　9. audience　10. numerous<br>
+    <strong>多餘選項：</strong>foundation、seek（這兩個是干擾詞，語意接近但不符合語境）
+  </div>
+</div>
+
+<!-- ── 克漏字 ─────────────────────────────────────── -->
+<div id="tab-cloze" class="wrap" style="display:none">
+  <div class="score-bar">
+    <div><div class="score-big" id="cloze-score">0 / 10</div><div class="score-label">答對題數</div></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-show" onclick="showAllCloze()">顯示所有答案</button>
+      <button class="btn btn-reset" onclick="resetCloze()">重設</button>
+    </div>
+  </div>
+  <div class="section-title">Part III · Cloze Test 克漏字</div>
+
+  <div class="note">請從每題四個選項中選出最適合填入空格的答案。</div>
+
+  <div class="passage-box" style="line-height:1.5;font-size:13.5px">
+    <p style="margin-bottom:8px;font-size:11px;color:var(--gray);letter-spacing:1px">PASSAGE — THE POWER OF 18 MINUTES</p>
+
+    <p style="line-height:2.6">
+      Have you ever wondered why TED Talks are exactly eighteen minutes long? The answer
+      <span style="display:inline-block">
+        <strong>(1)</strong>
+        <select id="cl1" onchange="checkCloze2('cl1')" style="font-family:inherit;font-size:12px;border:1px solid var(--lg);border-radius:3px;padding:2px 4px;background:#fff;cursor:pointer">
+          <option value="">— 選擇 —</option>
+          <option value="A">（A）lies in</option>
+          <option value="B">（B）results to</option>
+          <option value="C">（C）comes from</option>
+          <option value="D">（D）depends on</option>
+        </select>
+      </span>
+      human biology. Research shows that people find it hard to
+      <span style="display:inline-block">
+        <strong>(2)</strong>
+        <select id="cl2" onchange="checkCloze2('cl2')" style="font-family:inherit;font-size:12px;border:1px solid var(--lg);border-radius:3px;padding:2px 4px;background:#fff;cursor:pointer">
+          <option value="">— 選擇 —</option>
+          <option value="A">（A）ignore</option>
+          <option value="B">（B）maintain</option>
+          <option value="C">（C）create</option>
+          <option value="D">（D）reduce</option>
+        </select>
+      </span>
+      their attention
+      <span style="display:inline-block">
+        <strong>(3)</strong>
+        <select id="cl3" onchange="checkCloze2('cl3')" style="font-family:inherit;font-size:12px;border:1px solid var(--lg);border-radius:3px;padding:2px 4px;background:#fff;cursor:pointer">
+          <option value="">— 選擇 —</option>
+          <option value="A">（A）during</option>
+          <option value="B">（B）unless</option>
+          <option value="C">（C）until</option>
+          <option value="D">（D）throughout</option>
+        </select>
+      </span>
+      a long lecture. By limiting each talk to eighteen minutes, TED
+      <span style="display:inline-block">
+        <strong>(4)</strong>
+        <select id="cl4" onchange="checkCloze2('cl4')" style="font-family:inherit;font-size:12px;border:1px solid var(--lg);border-radius:3px;padding:2px 4px;background:#fff;cursor:pointer">
+          <option value="">— 選擇 —</option>
+          <option value="A">（A）forces</option>
+          <option value="B">（B）allows</option>
+          <option value="C">（C）prevents</option>
+          <option value="D">（D）encourages</option>
+        </select>
+      </span>
+      speakers to concentrate on their most important message.
+
+      <br><br>
+
+      This format has proven
+      <span style="display:inline-block">
+        <strong>(5)</strong>
+        <select id="cl5" onchange="checkCloze2('cl5')" style="font-family:inherit;font-size:12px;border:1px solid var(--lg);border-radius:3px;padding:2px 4px;background:#fff;cursor:pointer">
+          <option value="">— 選擇 —</option>
+          <option value="A">（A）unsuccessful</option>
+          <option value="B">（B）highly effective</option>
+          <option value="C">（C）quite boring</option>
+          <option value="D">（D）very expensive</option>
+        </select>
+      </span>
+      . TED Talks now attract
+      <span style="display:inline-block">
+        <strong>(6)</strong>
+        <select id="cl6" onchange="checkCloze2('cl6')" style="font-family:inherit;font-size:12px;border:1px solid var(--lg);border-radius:3px;padding:2px 4px;background:#fff;cursor:pointer">
+          <option value="">— 選擇 —</option>
+          <option value="A">（A）a small number of</option>
+          <option value="B">（B）numerous</option>
+          <option value="C">（C）very few</option>
+          <option value="D">（D）only local</option>
+        </select>
+      </span>
+      viewers from around the world. Speakers
+      <span style="display:inline-block">
+        <strong>(7)</strong>
+        <select id="cl7" onchange="checkCloze2('cl7')" style="font-family:inherit;font-size:12px;border:1px solid var(--lg);border-radius:3px;padding:2px 4px;background:#fff;cursor:pointer">
+          <option value="">— 選擇 —</option>
+          <option value="A">（A）seek to</option>
+          <option value="B">（B）refuse to</option>
+          <option value="C">（C）fail to</option>
+          <option value="D">（D）forget to</option>
+        </select>
+      </span>
+      share ideas that can change the way people think and act.
+
+      <br><br>
+
+      Watching a TED Talk
+      <span style="display:inline-block">
+        <strong>(8)</strong>
+        <select id="cl8" onchange="checkCloze2('cl8')" style="font-family:inherit;font-size:12px;border:1px solid var(--lg);border-radius:3px;padding:2px 4px;background:#fff;cursor:pointer">
+          <option value="">— 選擇 —</option>
+          <option value="A">（A）bores</option>
+          <option value="B">（B）wastes</option>
+          <option value="C">（C）broadens</option>
+          <option value="D">（D）limits</option>
+        </select>
+      </span>
+      your perspective in ways that reading alone cannot. In just eighteen minutes, you can gain insights from some of the world's most
+      <span style="display:inline-block">
+        <strong>(9)</strong>
+        <select id="cl9" onchange="checkCloze2('cl9')" style="font-family:inherit;font-size:12px;border:1px solid var(--lg);border-radius:3px;padding:2px 4px;background:#fff;cursor:pointer">
+          <option value="">— 選擇 —</option>
+          <option value="A">（A）ordinary</option>
+          <option value="B">（B）insightful</option>
+          <option value="C">（C）unknown</option>
+          <option value="D">（D）silent</option>
+        </select>
+      </span>
+      thinkers. It is no wonder that TED has
+      <span style="display:inline-block">
+        <strong>(10)</strong>
+        <select id="cl10" onchange="checkCloze2('cl10')" style="font-family:inherit;font-size:12px;border:1px solid var(--lg);border-radius:3px;padding:2px 4px;background:#fff;cursor:pointer">
+          <option value="">— 選擇 —</option>
+          <option value="A">（A）decreased in</option>
+          <option value="B">（B）lost its</option>
+          <option value="C">（C）become increasingly</option>
+          <option value="D">（D）always been</option>
+        </select>
+      </span>
+      popular around the world.
+    </p>
+  </div>
+
+  <div class="note">
+    <strong>答案：</strong>1.(A) lies in　2.(B) maintain　3.(A) during　4.(A) forces　5.(B) highly effective　6.(B) numerous　7.(A) seek to　8.(C) broadens　9.(B) insightful　10.(C) become increasingly
+  </div>
+</div>
+
+<!-- ── 命題說明 ─────────────────────────────────────── -->
+<div id="tab-explain" class="wrap" style="display:none">
+  <div class="section-title">Claude 怎麼出這三份題目</div>
+
+  <div class="q-block" style="margin-bottom:12px">
+    <div class="q-num">老師說的話</div>
+    <div style="background:#0f0f0f;border-radius:4px;padding:14px;margin-top:8px;font-size:12px;color:#CCCCCC;font-family:'Courier New',monospace;line-height:1.85">
+      （上傳龍騰 L7 TED Talks PDF 後）<br>
+      請幫我出一份月考題，單選 10 題、文意選填 10 題、克漏字 10 題，素養導向，全英語，附答案。
+    </div>
+    <div style="margin-top:8px;font-size:11px;color:var(--gray);font-style:italic">← 老師說的全部就這一句，不需要告訴 Claude 要考哪些詞彙或怎麼設計干擾選項</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-num">Claude 自己做到的事</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
+      <div style="padding:12px;background:var(--cream);border-radius:4px;border-left:3px solid var(--brown)">
+        <div style="font-size:11px;font-weight:700;color:var(--brown);margin-bottom:6px">📝 題型設計</div>
+        <div style="font-size:11px;color:var(--gray);line-height:1.7">單選題涵蓋主旨、細節、推論、詞彙四種層次，難度從易到難分配，全課均衡出題</div>
+      </div>
+      <div style="padding:12px;background:var(--cream);border-radius:4px;border-left:3px solid var(--brown)">
+        <div style="font-size:11px;font-weight:700;color:var(--brown);margin-bottom:6px">🎯 干擾選項設計</div>
+        <div style="font-size:11px;color:var(--gray);line-height:1.7">每個干擾選項都有邏輯——字面解讀、相關主題混淆、數字相近、反義詞，讓題目真的有鑑別度</div>
+      </div>
+      <div style="padding:12px;background:var(--cream);border-radius:4px;border-left:3px solid var(--brown)">
+        <div style="font-size:11px;font-weight:700;color:var(--brown);margin-bottom:6px">📖 文意選填設計</div>
+        <div style="font-size:11px;color:var(--gray);line-height:1.7">12 個詞彙含 2 個多餘干擾選項（foundation、seek 語意接近但不符語境），連貫成有意義的段落</div>
+      </div>
+      <div style="padding:12px;background:var(--cream);border-radius:4px;border-left:3px solid var(--brown)">
+        <div style="font-size:11px;font-weight:700;color:var(--brown);margin-bottom:6px">✏️ 克漏字設計</div>
+        <div style="font-size:11px;color:var(--gray);line-height:1.7">考語法、詞彙搭配、語意選擇三個層面，選項設計讓語感差的學生容易混淆，有真正的鑑別力</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note" style="margin-top:14px">
+    <strong>想要更多？</strong> 告訴 Claude「加一個閱讀測驗」「難度調高一點」「幫我做成 Word 試卷格式」——它直接繼續做，不需要重新說明課文範圍。
+  </div>
+</div>
+
+<script>
+// ── MC ──
+const mcAns={1:'B',2:'C',3:'B',4:'B',5:'B',6:'C',7:'B',8:'B',9:'C',10:'C'};
+let mcScores={};
+
+function answerMC(n,sel){
+  if(mcScores[n]!==undefined)return;
+  const correct=mcAns[n];
+  const block=document.getElementById('mc'+n);
+  const opts=block.querySelectorAll('.opt');
+  const letters=['A','B','C','D'];
+  opts.forEach((o,i)=>{
+    if(letters[i]===sel) o.classList.add(sel===correct?'correct':'wrong');
+    if(letters[i]===correct&&sel!==correct) o.classList.add('revealed');
+  });
+  const exp=document.getElementById('exp-mc'+n);
+  if(exp) exp.classList.add('show');
+  mcScores[n]=(sel===correct)?1:0;
+  document.getElementById('mc-score').textContent=Object.values(mcScores).reduce((a,b)=>a+b,0)+' / 10';
+}
+function showAllMC(){for(let i=1;i<=10;i++)if(mcScores[i]===undefined)answerMC(i,null);}
+function resetMC(){
+  mcScores={};
+  document.getElementById('mc-score').textContent='0 / 10';
+  document.querySelectorAll('#tab-mc .opt').forEach(o=>o.className='opt');
+  document.querySelectorAll('#tab-mc .explain').forEach(e=>e.classList.remove('show'));
+  // re-bind
+  for(let i=1;i<=10;i++){
+    const block=document.getElementById('mc'+i);
+    block.querySelectorAll('.opt').forEach((o,idx)=>{
+      const letters=['A','B','C','D'];
+      o.onclick=()=>answerMC(i,letters[idx]);
+    });
+  }
+}
+
+// ── Vocab ──
+const vocabAns={v1:'established',v2:'increasingly',v3:'platform',v4:'celebrities',v5:'discuss',v6:'fascination',v7:'broaden',v8:'concentrate',v9:'audience',v10:'numerous'};
+let vocabScores={};
+
+function checkVocab(id){
+  const inp=document.getElementById(id);
+  const val=inp.value.trim().toLowerCase();
+  const ans=vocabAns[id];
+  const chip=document.getElementById('chip-'+ans);
+  if(val===ans){
+    inp.classList.add('correct');inp.classList.remove('wrong');
+    if(chip) chip.classList.add('used');
+    vocabScores[id]=1;
+  } else if(val.length>=3){
+    inp.classList.add('wrong');inp.classList.remove('correct');
+    vocabScores[id]=0;
+  } else {
+    inp.classList.remove('correct','wrong');
+  }
+  document.getElementById('vocab-score').textContent=Object.values(vocabScores).filter(v=>v===1).length+' / 10';
+}
+function showAllVocab(){
+  Object.keys(vocabAns).forEach(id=>{
+    const inp=document.getElementById(id);
+    inp.value=vocabAns[id];
+    inp.classList.add('correct');inp.classList.remove('wrong');
+    const chip=document.getElementById('chip-'+vocabAns[id]);
+    if(chip) chip.classList.add('used');
+    vocabScores[id]=1;
+  });
+  document.getElementById('vocab-score').textContent='10 / 10';
+}
+function resetVocab(){
+  vocabScores={};
+  document.getElementById('vocab-score').textContent='0 / 10';
+  Object.keys(vocabAns).forEach(id=>{
+    const inp=document.getElementById(id);
+    inp.value='';inp.classList.remove('correct','wrong');
+  });
+  document.querySelectorAll('.word-chip').forEach(c=>c.classList.remove('used'));
+}
+
+// ── Cloze ──
+const clozeAns={cl1:'A',cl2:'B',cl3:'A',cl4:'A',cl5:'B',cl6:'B',cl7:'A',cl8:'C',cl9:'B',cl10:'C'};
+let clozeScores={};
+
+function checkCloze2(id){
+  const sel=document.getElementById(id);
+  const val=sel.value;
+  if(!val)return;
+  const correct=clozeAns[id];
+  sel.style.borderColor=val===correct?'var(--teal)':'var(--red)';
+  sel.style.color=val===correct?'var(--teal)':'var(--red)';
+  clozeScores[id]=(val===correct)?1:0;
+  document.getElementById('cloze-score').textContent=Object.values(clozeScores).filter(v=>v===1).length+' / 10';
+}
+function showAllCloze(){
+  Object.keys(clozeAns).forEach(id=>{
+    const sel=document.getElementById(id);
+    sel.value=clozeAns[id];
+    sel.style.borderColor='var(--teal)';
+    sel.style.color='var(--teal)';
+    clozeScores[id]=1;
+  });
+  document.getElementById('cloze-score').textContent='10 / 10';
+}
+function resetCloze(){
+  clozeScores={};
+  document.getElementById('cloze-score').textContent='0 / 10';
+  Object.keys(clozeAns).forEach(id=>{
+    const sel=document.getElementById(id);
+    sel.value='';
+    sel.style.borderColor='';
+    sel.style.color='';
+  });
+}
+
+function showTab(tab,el){
+  ['mc','vocab','cloze','explain'].forEach(t=>{
+    document.getElementById('tab-'+t).style.display=t===tab?'block':'none';
+  });
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+}
+</script>
+</body>
+</html>
